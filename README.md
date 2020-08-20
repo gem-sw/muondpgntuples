@@ -33,12 +33,12 @@ The _fillers_ included in the ntuple are defined in the `MuNtupleProducer` const
 [...]
 
   m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "dtDigi",    MuNtupleDTDigiFiller::Tag::PH1));
-  m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "dtPh2Digi", MuNtupleDTDigiFiller::Tag::PH2));
+  m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "ph2DtDigi", MuNtupleDTDigiFiller::Tag::PH2));
 
 [...]
 ```
 
-`dtDigi` or `dtPh2Digi` are _labels_ , and `MuNtupleDTDigiFiller::Tag::PH1` or `MuNtupleDTDigiFiller::Tag::PH1` are _tags_ of the same _filler_ base class.
+`dtDigi` or `ph2DtDigi` are _labels_ , and `MuNtupleDTDigiFiller::Tag::PH1` or `MuNtupleDTDigiFiller::Tag::PH1` are _tags_ of the same _filler_ base class.
 
 A configuration helper class, called `MuNtupleConfig` also exists.
 
