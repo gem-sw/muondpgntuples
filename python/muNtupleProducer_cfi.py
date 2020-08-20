@@ -1,9 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
 muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
-                                  ph1DtDigiTag = cms.untracked.InputTag("muonDTDigis"),
-                                  ph2DtDigiTag = cms.untracked.InputTag("none"),
-
                                   ph1DtSegmentTag = cms.untracked.InputTag("dt4DSegments"),        
                                   ph2DtSegmentTag = cms.untracked.InputTag("none"),
 
