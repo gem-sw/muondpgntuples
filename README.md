@@ -9,7 +9,7 @@ cmsrel CMSSW_11_1_2_patch2
 cd CMSSW_11_1_2_patch2/src/
 cmsenv
 
-git clone https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples.git MuDPGAnalysis/MuonDPGNtuples
+git clone -b RPCInformation https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples.git MuDPGAnalysis/MuonDPGNtuples
 
 scram b -j 5
 
