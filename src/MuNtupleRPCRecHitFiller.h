@@ -71,34 +71,7 @@ class MuNtupleRPCRecHitFiller : public MuNtupleBaseFiller
 
 
 
-/*
-  /// Enum to activate "flavour-by-flavour"
-  /// changes in the filling logic
-  Tag m_tag;
 
-  /// The digi token
-  edm::EDGetTokenT<DTDigiCollection> m_dtDigiToken;
-
-  /// The variables holding
-  /// all digi related information
-
-  unsigned int m_nDigis; // the # of digis (size of all following vectors)
-
-  std::vector<short> m_digi_wheel;   // wheel (short in [-2:2] range)
-  std::vector<short> m_digi_sector;  // sector (short in [1:14] range)
-                                     // sector 13 used for the second MB4 of sector 4
-                                     // sector 14 used for the second MB4 of sector 10
-  std::vector<short> m_digi_station; // station (short in [1:4] range)
-  
-  std::vector<short> m_digi_superLayer; // superlayer (short in [1:3] range)
-                                        // SL 1 and 3 are phi SLs
-                                        // SL 2 is theta SL
-  std::vector<short> m_digi_layer;      // layer (short in [1:4] range)
-  std::vector<short> m_digi_wire;       // wire (short in [1:X] range)
-                                        // X varies for different chambers SLs and layers
-
-  std::vector<float> m_digi_time; // float with digi time in ns (no pedestal subtraction) 
-*/
 
 
 };
