@@ -44,8 +44,7 @@ MuNtupleConfig::MuNtupleConfig(const edm::ParameterSet & config)
     m_dtSyncs[PhaseTag::PH2] = DTTTrigSyncFactory::get()->create(config.getUntrackedParameter<std::string>("ph2DTtTrigMode"),
 								 config.getUntrackedParameter<edm::ParameterSet>("ph2DTtTrigModeConfig"));
 //RPC
-  //m_inputTags["rpcDigiLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcDigiLabel", none);
-  //m_storeRpcDigis = config.getUntrackedParameter<bool>("storeRpcDigis");
+
   m_inputTags["rpcRecHitLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcRecHitLabel", none);
   m_storeRpcRecHits = config.getUntrackedParameter<bool>("storeRpcRecHits");
 
