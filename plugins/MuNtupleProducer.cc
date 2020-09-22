@@ -47,9 +47,7 @@ MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
 
   m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "dtSeg",    MuNtupleDTSegmentFiller::Tag::PH1));
   m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "ph2DtSeg", MuNtupleDTSegmentFiller::Tag::PH2));
-
   m_fillers.push_back(std::make_unique<MuNtupleRPCRecHitFiller>(consumesCollector(), m_config, m_tree, "rpcRecHit"));
-
 
 }
 
@@ -62,7 +60,6 @@ void MuNtupleProducer::beginJob()
       filler->initialize();
       filler->clear();
     }
-
 }
 
 void MuNtupleProducer::beginRun(const edm::Run & run, const edm::EventSetup & environment )
