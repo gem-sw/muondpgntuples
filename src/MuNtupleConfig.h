@@ -19,6 +19,11 @@
 #include "CalibMuon/DTDigiSync/interface/DTTTrigBaseSync.h"
 #include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
 #include "Geometry/DTGeometry/interface/DTGeometry.h"
+#include "Geometry/GEMGeometry/interface/GEMGeometry.h"
+#include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
+#include "TrackingTools/Records/interface/TransientTrackRecord.h"
+
+#include "RecoMuon/TrackingTools/interface/MuonServiceProxy.h"
 
 #include <map>
 #include <string>
@@ -48,6 +53,8 @@ class MuNtupleConfig
   void getES(const edm::Run &run, 
 	     const edm::EventSetup & environment);
 
+  edm::EventSetup passES();
+
   /// Map containing different input tags
   std::map<std::string, edm::InputTag> m_inputTags;
 
@@ -59,6 +66,17 @@ class MuNtupleConfig
 
   /// Handle to the DT geometry
   edm::ESHandle<DTGeometry> m_dtGeometry;
+
+  /// Handle to the GEM geometry
+  edm::ESHandle<GEMGeometry> m_gemGeometry;
+
+  /// Handle to the Transient Track Builder
+  edm::ESHandle<TransientTrackBuilder> m_transientTrackBuilder;
+
+  float residual_x_cut;
+    
+  //edm::ParameterSet & muon_service_parameter{};
+  MuonServiceProxy *muon_service;
 
 };
 

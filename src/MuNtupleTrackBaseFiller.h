@@ -1,9 +1,12 @@
-#ifndef MuNtuple_MuNtupleBaseFiller_h
-#define MuNtuple_MuNtupleBaseFiller_h
+#ifndef MuNtuple_MuNtupleTrackBaseFiller_h
+#define MuNtuple_MuNtupleTrackBaseFiller_h
 
-/** \class MuNtupleBaseFiller MuNtupleBaseFiller.h MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleBaseFiller.h
+/**
  *  
- * Helper class defining the generic interface of a filler
+ *
+ * Helper class developed by G. Milella on the basis of the BaseFiller developed by C. Battilana.
+ *The difference wrt to the BaseFiller is in the the method fill_new that allow to access also to the eventSetup variables 
+ *(while the fill() method in the BaseFiller just allow access to the Event)
  *
  * \author C. Battilana (INFN BO)
  *
@@ -20,17 +23,17 @@
 #include <memory>
 #include <string>
 
-class MuNtupleBaseFiller
+class MuNtupleTrackBaseFiller
 {
 
  public :
 
   /// Constructor
-  MuNtupleBaseFiller(const std::shared_ptr<MuNtupleConfig> config, 
+  MuNtupleTrackBaseFiller(const std::shared_ptr<MuNtupleConfig> config, 
 		     std::shared_ptr<TTree> tree, const std::string & label);
   
   /// Destructor
-  virtual ~MuNtupleBaseFiller();
+  virtual ~MuNtupleTrackBaseFiller();
 
   /// Intialize function : setup tree branches etc ...
   virtual void initialize() = 0;
@@ -38,10 +41,9 @@ class MuNtupleBaseFiller
   /// Clear branches before event filling
   virtual void clear() = 0;
 
-  /// Fill tree branches for a given event
-  virtual void fill(const edm::Event & ev) = 0;
+    
+  virtual void fill_new(const edm::Event & ev, const edm::EventSetup & environment) = 0;
 
-  
  protected :
 
   /// Definition of default values for int variables
