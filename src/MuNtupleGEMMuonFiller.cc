@@ -35,6 +35,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <thread>
+#include <chrono>
 
 #include "TVectorF.h"
 #include "TFile.h"
@@ -87,7 +89,8 @@ void MuNtupleGEMMuonFiller::initialize()
   m_tree->Branch((m_label + "_isStandalone").c_str(), &m_isStandalone);
   m_tree->Branch((m_label + "_isTracker").c_str(), &m_isTracker);
   m_tree->Branch((m_label + "_isGEM").c_str(), &m_isGEM);
-
+  m_tree->Branch((m_label + "_isCSC").c_str(), &m_isCSC);
+  
   m_tree->Branch((m_label + "_isLoose").c_str(), &m_isLoose);
   m_tree->Branch((m_label + "_isMedium").c_str(), &m_isMedium);
   m_tree->Branch((m_label + "_isTight").c_str(), &m_isTight);
@@ -98,7 +101,7 @@ void MuNtupleGEMMuonFiller::initialize()
 
   m_tree->Branch((m_label + "_isinsideout").c_str(), &m_isinsideout);
   m_tree->Branch((m_label + "_isincoming").c_str(), &m_isincoming);
-    
+
   m_tree->Branch((m_label + "_propagated_region").c_str(), &m_propagated_region);
   m_tree->Branch((m_label + "_propagated_layer").c_str(), &m_propagated_layer);
   m_tree->Branch((m_label + "_propagated_chamber").c_str(), &m_propagated_chamber);
@@ -136,6 +139,7 @@ void MuNtupleGEMMuonFiller::clear()
   m_isStandalone.clear();
   m_isTracker.clear();
   m_isGEM.clear();
+  m_isCSC.clear();
   m_propagatedisME11.clear();
   
   m_isLoose.clear();
@@ -146,7 +150,7 @@ void MuNtupleGEMMuonFiller::clear()
   
   m_isinsideout.clear();
   m_isincoming.clear();
-    
+
   m_propagated_region.clear();
   m_propagated_layer.clear();
   m_propagated_chamber.clear();
@@ -180,6 +184,9 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
   auto csc_segments = conditionalGet<CSCSegmentCollection>(ev,m_cscSegmentToken, "CSCSegmentCollection" );
   auto vtxs = conditionalGet<std::vector<reco::Vertex>>(ev, m_primaryVerticesToken, "std::vector<reco::Vertex>");
 
+  bool isCSC = false;
+  bool isME11 = false;
+  
   edm::Handle<GEMRecHitCollection> rechit_collection;
   ev.getByToken(m_gemRecHitToken, rechit_collection);
   if (not rechit_collection.isValid()) {
@@ -214,6 +221,11 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
     return;
   }
 
+  edm::ESHandle<CSCGeometry> csc = m_config->m_cscGeometry;
+  if (not csc.isValid()) {
+    std::cout << "CSCGeometry is invalid" << std::endl;
+    return;
+  }
     
   edm::ESHandle<TransientTrackBuilder> transient_track_builder = m_config->m_transientTrackBuilder;
   if (not transient_track_builder.isValid()) {
@@ -227,24 +239,25 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
       for (const auto & muon : (*muons))
 	{
 
-	  m_pt.push_back(muon.pt());
-	  m_eta.push_back(muon.eta());
-	  m_phi.push_back(muon.phi());
-	  m_charge.push_back(muon.charge());
-	  
-	  m_isGlobal.push_back(muon.isGlobalMuon());
-	  m_isStandalone.push_back(muon.isStandAloneMuon());
-	  m_isTracker.push_back(muon.isTrackerMuon());
-	  m_isGEM.push_back(muon.isGEMMuon());
-
-	  m_isLoose.push_back(muon.passed(reco::Muon::CutBasedIdLoose));
-	  m_isMedium.push_back(muon.passed(reco::Muon::CutBasedIdMedium));
-	  m_isTight.push_back(muon.passed(reco::Muon::CutBasedIdTight));
-
-	  m_nMuons++;
-
 	  if(!muon.outerTrack().isNull())
 	    {
+	      
+	      m_pt.push_back(muon.pt());
+	      m_eta.push_back(muon.eta());
+	      m_phi.push_back(muon.phi());
+	      m_charge.push_back(muon.charge());
+
+	      m_isGlobal.push_back(muon.isGlobalMuon());
+	      m_isStandalone.push_back(muon.isStandAloneMuon());
+	      m_isTracker.push_back(muon.isTrackerMuon());
+	      m_isGEM.push_back(muon.isGEMMuon());
+
+	      m_isLoose.push_back(muon.passed(reco::Muon::CutBasedIdLoose));
+	      m_isMedium.push_back(muon.passed(reco::Muon::CutBasedIdMedium));
+	      m_isTight.push_back(muon.passed(reco::Muon::CutBasedIdTight));
+
+	      m_nMuons++;
+
 	      const reco::Track* track = muon.outerTrack().get();
 	      const reco::TrackRef outerTrackRef = muon.outerTrack();
 	      if (track == nullptr) {
@@ -283,17 +296,23 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 	      	
 	      for(; recHitMu != recHitMuEnd; ++recHitMu)
 		{
-				
 		  DetId detId = (*recHitMu)->geographicalId();
+		  
 		  if(detId.det() == DetId::Muon && detId.subdetId() == MuonSubdetId::CSC)
 		    {
+		      isCSC = true;
+		      
+		      const CSCDetId csc_id{detId};
+
+		      /*std::cout << "rec csc evento " << std::endl;
 		      const CSCRecHit2D *cscRecHitSta = dynamic_cast<const CSCRecHit2D *>(*recHitMu);
 		      if (cscRecHitSta == nullptr)
 			{
 			  std::cout << "dynamic cast failure" << std::endl;
 			  continue;
 			}
-		      
+		      */
+
 		      /*const CSCSegment *cscSegmentSta = dynamic_cast<const CSCSegment*>(*recHitMu);
 		      if(cscSegmentSta == nullptr)
 			{
@@ -302,6 +321,14 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 			}
 		      */
 
+		      if(csc_id.station() == 1 && csc_id.ring() == 1) isME11 = true;
+		      else isME11 = false;
+		    }
+		  else continue;
+		}
+	      m_isCSC.push_back(isCSC);
+	      
+	      if(isCSC){ 
 		      for (const GEMRegion* gem_region : gem->regions()) {
 			bool is_opposite_region = muon.eta() * gem_region->region() < 0;
 			if (is_incoming xor is_opposite_region)
@@ -313,7 +340,7 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 			for (const GEMStation* station : gem_region->stations()) {
 			  for (const GEMSuperChamber* super_chamber : station->superChambers()) {
 			    for (const GEMChamber* chamber : super_chamber->chambers()) {
-			      
+			          
 			      const BoundPlane& bound_plane = chamber->surface();
 			      			      
 			      const auto& dest_state = propagator->propagate(start_state, bound_plane);
@@ -322,20 +349,23 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 				  std::cout << "failed to propagate" << std::endl;
 				  continue;
 				}
-			      				    
+
 			      const GlobalPoint&& dest_global_pos = dest_state.globalPosition();
-			      			      
+			      
 			      const GEMEtaPartition* eta_partition = findEtaPartition(chamber, dest_global_pos);
 			      if (eta_partition == nullptr) {
 				std::cout << "failed to find GEMEtaPartition" << std::endl; 
 				continue;
 			      }
 
+			      			      
 			      const GEMDetId&& gem_id = eta_partition->id();
 			     
-			      bool isME11 = cscRecHitSta->cscDetId().station() == 1 && cscRecHitSta->cscDetId().ring() == 1;
+			      
+			      //bool isME11 = cscRecHitSta->cscDetId().station() == 1 && cscRecHitSta->cscDetId().ring() == 1;
 			      m_propagatedisME11.push_back(isME11);
-                              			      
+                              	
+			      		      
 			      const LocalPoint&& dest_local_pos = eta_partition->toLocal(dest_global_pos);
 			      
 			      m_propagatedGlb_x.push_back(dest_global_pos.x());
@@ -345,29 +375,26 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 			      m_propagatedGlb_phi.push_back(dest_global_pos.phi());
 			      
 			      m_propagated_pt.push_back(muon.pt());
-                              m_propagated_phi.push_back(muon.phi());
-                              m_propagated_eta.push_back(muon.eta());
-                              m_propagated_charge.push_back(muon.charge());
+			      m_propagated_phi.push_back(muon.phi());
+			      m_propagated_eta.push_back(muon.eta());
+			      m_propagated_charge.push_back(muon.charge());
 
 			      m_propagatedLoc_x.push_back(dest_local_pos.x());
 			      m_propagatedLoc_phi.push_back(dest_local_pos.phi());
 			      m_propagatedLoc_r.push_back(dest_local_pos.perp());
-			      //m_propagatedLoc_y.push_back(dest_local_pos.y());
-			      //m_propagatedLoc_z.push_back(dest_local_pos.z());
-			      			    
+			      
 			      m_propagated_region.push_back(gem_id.region());
                               m_propagated_layer.push_back(gem_id.layer());
-                              m_propagated_chamber.push_back(gem_id.chamber());
-                              m_propagated_etaP.push_back(gem_id.roll());
-
+			      m_propagated_chamber.push_back(gem_id.chamber());
+			      m_propagated_etaP.push_back(gem_id.roll());
+			      
 			      m_isinsideout.push_back(is_insideout);
                               m_isincoming.push_back(is_incoming);
 			    }  
 			  }
 			}   
-		      }  
-		    }
-		}
+		      }
+	      }  
 	    }
 	}
     }
