@@ -79,6 +79,8 @@ class MuNtupleGEMMuonFiller : public MuNtupleTrackBaseFiller
   std::vector<bool>  m_isTracker;
   //std::vector<bool>  m_isTrackerArb;
   std::vector<bool>  m_isGEM;
+  std::vector<bool>  m_isCSC;
+  std::vector<bool> m_isME11;
   
   std::vector<bool> m_propagatedisME11;
 
@@ -88,10 +90,7 @@ class MuNtupleGEMMuonFiller : public MuNtupleTrackBaseFiller
 
   std::vector<bool> m_isincoming;
   std::vector<bool> m_isinsideout;
-  std::vector<bool> m_deststatevalid;
-  std::vector<bool> m_tsosvalid;
-
-
+  
   float m_path_length;
 
   std::vector<int> m_propagated_region;
@@ -103,11 +102,6 @@ class MuNtupleGEMMuonFiller : public MuNtupleTrackBaseFiller
   std::vector<float> m_propagated_phi;
   std::vector<float> m_propagated_eta;
   std::vector<float> m_propagated_charge;
-
-  std::vector<float> m_propagatedGlbold_x;
-  std::vector<float> m_propagatedGlbold_y;
-  std::vector<float> m_propagatedGlbold_z;
-  std::vector<float> m_propagatedGlbold_r;
 
   std::vector<float> m_propagatedLoc_x;
   std::vector<float> m_propagatedLoc_y;
