@@ -326,7 +326,7 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
 				}
 		      */
 
-		      if(csc_id.station() == 1 && csc_id.ring() == 1) isME11 = true;
+		      if(csc_id.station() == 1 && ( csc_id.ring() == 1 || csc_id.ring() == 4) ) isME11 = true;
 		    }
 		} //loop on recHits
 	      m_isCSC.push_back(isCSC);
