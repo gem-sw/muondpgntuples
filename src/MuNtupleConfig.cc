@@ -48,7 +48,7 @@ MuNtupleConfig::MuNtupleConfig(const edm::ParameterSet & config)
   m_inputTags["rpcRecHitLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcRecHitLabel", none);
   m_storeRpcRecHits = config.getUntrackedParameter<bool>("storeRpcRecHits");
   m_inputTags["rpcDigiLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcDigiLabel", none);
-  m_storeRpcDigis = config.getUntrackedParameter<bool>("storeRpcDigiHits");
+  m_storeRpcDigis = config.getUntrackedParameter<bool>("storeRpcDigisHits");
 
 
 }
