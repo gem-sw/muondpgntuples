@@ -2,7 +2,7 @@ import FWCore.ParameterSet.Config as cms
 
 muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                   storeRpcRecHits = cms.untracked.bool(True),
-				  storeRpcDigiHits = cms.untracked.bool(True),
+				  storeRpcDigisHits = cms.untracked.bool(True),
                                   rpcDigiLabel = cms.untracked.InputTag("muonRPCDigis"),
                                   rpcRecHitLabel = cms.untracked.InputTag("rpcRecHits"),
                                   ph1DtDigiTag = cms.untracked.InputTag("muonDTDigis"),
