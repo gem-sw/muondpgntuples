@@ -56,11 +56,11 @@ The configuration of the ntuple producer is available under `python/muNtupleProd
 1. Compile, run ` cmsRun test/muDpgNtuples_cfg.py` and check that the ntuple includes your new quantities.
 
 **NOTEs**: 
-- a _filler_ .h file is the best place where to document the quantities that are filled (e.g. mention units, ranges, etc), look [`src/ MuNtupleDTDigiFiller.h`]() as an example;
+- a _filler_ .h file is the best place where to document the quantities that are filled (e.g. mention units, ranges, etc), look [`src/ MuNtupleDTDigiFiller.h`](https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples/-/blob/master/src/MuNtupleDTDigiFiller.h#L58-73) as an example;
 - the `MuNtupleBaseFiller` class includes placeholders for default values in the ntuple (e.g. `DEFAULT_INT_VAL`), please use those (and not "magic" numbers) when filling with default values is needed;
 - the `MuNtupleBaseFiller` class includes a `conditionalGet()` function that provides a default dump in case a collection is missing in the input file, please use it.
 
-A complete example showing how to include phase-1 and phase-2 DT digis is available [here]().
+A complete example showing the changes to include phase-1 and phase-2 DT digis is available [here](https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples/-/compare/dt_segment_and_digis...dt_segment_only) (please note that the opposite was done, digis were removed, but anyhow this lists all the needed steps).
 
 
 
