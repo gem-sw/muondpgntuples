@@ -37,6 +37,12 @@
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleGEMSegmentFiller.h"
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleGEMMuonFiller.h"
 
+#include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleRPCRecHitFiller.h"
+#include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleRPCDigiFiller.h"
+
+
+
+
 #include <iostream>
 
 MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
@@ -54,24 +60,30 @@ MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
 
   m_fillers.push_back(std::make_unique<MuNtupleEventFiller>(consumesCollector(), m_config, m_tree, "event"));
 
-  //m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "dtDigi",    MuNtupleDTDigiFiller::Tag::PH1));
+  m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "dtDigi",    MuNtupleDTDigiFiller::Tag::PH1));
   //m_fillers.push_back(std::make_unique<MuNtupleDTDigiFiller>(consumesCollector(), m_config, m_tree, "ph2DtDigi", MuNtupleDTDigiFiller::Tag::PH2));
 
-  //m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "dtSeg",    MuNtupleDTSegmentFiller::Tag::PH1));
+  m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "dtSeg",    MuNtupleDTSegmentFiller::Tag::PH1));
   //m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "ph2DtSeg", MuNtupleDTSegmentFiller::Tag::PH2));
   
   m_fillers.push_back(std::make_unique<MuNtupleGEMDigiFiller>(consumesCollector(), m_config, m_tree, "gemDigi"));
   
   m_fillers.push_back(std::make_unique<MuNtupleGEMRecHitFiller>(consumesCollector(), m_config, m_tree, "gemRecHit"));
 
+  m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "dtSeg",    MuNtupleDTSegmentFiller::Tag::PH1));
+  m_fillers.push_back(std::make_unique<MuNtupleDTSegmentFiller>(consumesCollector(), m_config, m_tree, "ph2DtSeg", MuNtupleDTSegmentFiller::Tag::PH2));
+
+  m_fillers.push_back(std::make_unique<MuNtupleRPCRecHitFiller>(consumesCollector(), m_config, m_tree, "rpcRecHit"));
+
+  if (m_config->m_storeRpcDigis){
+     m_fillers.push_back(std::make_unique<MuNtupleRPCDigiFiller>(consumesCollector(), m_config, m_tree, "rpcDigi"));
+    }
+
   m_fillers.push_back(std::make_unique<MuNtupleGEMSegmentFiller>(consumesCollector(), m_config, m_tree, "gemSegment"));
 
-  //m_fillers.push_back(std::make_unique<MuNtupleGEMMuonFiller>(consumesCollector(),m_config,m_tree,"mu"));
   m_trackfillers.push_back(std::make_unique<MuNtupleGEMMuonFiller>(consumesCollector(), m_config, m_tree, "mu"));
-
   
 }
-
 
 void MuNtupleProducer::beginJob() 
 {
@@ -92,6 +104,7 @@ void MuNtupleProducer::beginJob()
 
 void MuNtupleProducer::beginRun(const edm::Run & run, const edm::EventSetup & environment )
 {
+  environment.get<MuonGeometryRecord>().get(m_rpcGeo);
 
   m_config->getES(run, environment);
 

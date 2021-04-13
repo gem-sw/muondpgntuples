@@ -53,6 +53,8 @@ class MuNtupleProducer : public edm::one::EDAnalyzer<edm::one::SharedResources,e
 
   /// The container with all the fillers
   std::vector<std::unique_ptr<MuNtupleBaseFiller>> m_fillers;
+  edm::ESHandle<RPCGeometry> m_rpcGeo;
+
 
   std::vector<std::unique_ptr<MuNtupleTrackBaseFiller>> m_trackfillers;
 

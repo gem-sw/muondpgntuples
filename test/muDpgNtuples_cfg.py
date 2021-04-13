@@ -35,7 +35,7 @@ options.register('secondaryInputFolder',
                  "EOS folder with input files for secondary files")
 
 options.register('ntupleName',
-                 'MuDPGNTuple_MWGR5_EXP_run338714.root',
+                 './MuDPGNtuple_11_1_2_patch2_plusRPCDigi.root', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Folder and name ame for output ntuple")
@@ -85,6 +85,11 @@ process.TFileService = cms.Service('TFileService',
         fileName = cms.string(options.ntupleName)
     )
 
+process.load("EventFilter.RPCRawToDigi.rpcUnpacker_cfi")
+import EventFilter.RPCRawToDigi.rpcUnpacker_cfi
+muonRPCDigis = EventFilter.RPCRawToDigi.rpcUnpacker_cfi.rpcunpacker.clone()
+muonRPCDigis.InputLabel = 'rawDataCollector'
+process.rpcunpacker.InputLabel = 'rawDataCollector'
 
 process.load('Configuration/StandardSequences/GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.MagneticField_cff")
@@ -97,7 +102,10 @@ process.load('TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorOp
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('MuDPGAnalysis.MuonDPGNtuples.muNtupleProducer_cfi')
 
-process.p = cms.Path(#process.muonDTDigis + 
-                      process.muNtupleProducer)
+process.muNtupleProducer.rpcDigiLabel = cms.untracked.InputTag('rpcunpacker')
 
+
+process.p = cms.Path(process.muonDTDigis
+                     + process.rpcunpacker 
+                     + process.muNtupleProducer)
 

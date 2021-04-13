@@ -4,6 +4,11 @@ from RecoMuon.TrackingTools.MuonServiceProxy_cff import MuonServiceProxy
 muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                   MuonServiceProxy,
                                   residualXCut = cms.double(5.0),
+                                  storeRpcRecHits = cms.untracked.bool(True),
+				  storeRpcDigisHits = cms.untracked.bool(True),
+                                  rpcDigiLabel = cms.untracked.InputTag("muonRPCDigis"),
+                                  rpcRecHitLabel = cms.untracked.InputTag("rpcRecHits"),
+
                                   ph1DtDigiTag = cms.untracked.InputTag("muonDTDigis"),
                                   ph2DtDigiTag = cms.untracked.InputTag("none"),
 
@@ -26,5 +31,4 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                                                             tTrigLabel = cms.string(''),
                                                                             debug = cms.untracked.bool(False)
                                                                         )
-)
-
+        )

@@ -21,6 +21,8 @@
 #include "Geometry/DTGeometry/interface/DTGeometry.h"
 #include "Geometry/CSCGeometry/interface/CSCGeometry.h"
 #include "Geometry/GEMGeometry/interface/GEMGeometry.h"
+#include "Geometry/RPCGeometry/interface/RPCGeometry.h"
+#include "Geometry/Records/interface/MuonGeometryRecord.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 
@@ -68,6 +70,9 @@ class MuNtupleConfig
   /// Handle to the DT geometry
   edm::ESHandle<DTGeometry> m_dtGeometry;
 
+  /// Handle to the RPC geometry
+  edm::ESHandle<RPCGeometry> m_rpcGeometry;
+
   /// Handle to the CSC geometry
   edm::ESHandle<CSCGeometry> m_cscGeometry;
 
@@ -78,6 +83,8 @@ class MuNtupleConfig
   edm::ESHandle<TransientTrackBuilder> m_transientTrackBuilder;
 
   float residual_x_cut;
+
+  bool m_storeRpcDigis, m_storeRpcRecHits;
     
   //edm::ParameterSet & muon_service_parameter{};
   MuonServiceProxy *muon_service;

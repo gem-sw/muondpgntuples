@@ -23,6 +23,8 @@
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 
 #include "CalibMuon/DTDigiSync/interface/DTTTrigSyncFactory.h"
+#include "Geometry/RPCGeometry/interface/RPCGeometry.h"
+
 
 #include "TString.h"
 #include "TRegexp.h"
@@ -46,10 +48,15 @@ MuNtupleConfig::MuNtupleConfig(const edm::ParameterSet & config)
     m_dtSyncs[PhaseTag::PH2] = DTTTrigSyncFactory::get()->create(config.getUntrackedParameter<std::string>("ph2DTtTrigMode"),
 								 config.getUntrackedParameter<edm::ParameterSet>("ph2DTtTrigModeConfig"));
 
+  m_inputTags["rpcRecHitLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcRecHitLabel", none);
+  m_storeRpcRecHits = config.getUntrackedParameter<bool>("storeRpcRecHits");
+  m_inputTags["rpcDigiLabel"] = config.getUntrackedParameter<edm::InputTag>("rpcDigiLabel", none);
+  m_storeRpcDigis = config.getUntrackedParameter<bool>("storeRpcDigisHits");
+
+
   m_inputTags["gemDigiTag"] = config.getUntrackedParameter<edm::InputTag>("gemDigiTag", none);
   
-  m_inputTags["gemRecHitTag"] = config.getUntrackedParameter<edm::InputTag>("gemRecHitTag", 
-none);
+  m_inputTags["gemRecHitTag"] = config.getUntrackedParameter<edm::InputTag>("gemRecHitTag",none);
 
   m_inputTags["gemSegmentTag"] = config.getUntrackedParameter<edm::InputTag>("gemSegmentTag",none);
 
@@ -62,6 +69,7 @@ none);
   m_inputTags["gemRecHitTag"] = config.getUntrackedParameter<edm::InputTag>("gemRecHitTag",none);
 
   residual_x_cut = static_cast<float>(config.getParameter<double>("residualXCut"));
+
 }
 
 void MuNtupleConfig::getES(const edm::EventSetup & environment) 
@@ -74,11 +82,14 @@ void MuNtupleConfig::getES(const edm::EventSetup & environment)
     m_dtSyncs[PhaseTag::PH2]->setES(environment);
 
   environment.get<MuonGeometryRecord>().get(m_dtGeometry);
-  environment.get<GlobalTrackingGeometryRecord>().get(m_trackingGeometry);
+  environment.get<MuonGeometryRecord>().get(m_cscGeometry);
+  environment.get<MuonGeometryRecord>().get(m_rpcGeometry);
   environment.get<MuonGeometryRecord>().get(m_gemGeometry);
+
+  environment.get<GlobalTrackingGeometryRecord>().get(m_trackingGeometry);
   environment.get<TransientTrackRecord>().get("TransientTrackBuilder", m_transientTrackBuilder);
      
- }
+}
 
 void MuNtupleConfig::getES(const edm::Run &run, const edm::EventSetup & environment) 
 {

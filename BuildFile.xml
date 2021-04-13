@@ -12,6 +12,7 @@
 <use name="DataFormats/DTRecHit"/>
 <use name="DataFormats/L1DTTrackFinder"/>
 <use name="Geometry/GEMGeometry"/>
+<use name="Geometry/RPCGeometry"/>
 <use name="DataFormats/GEMDigi"/>
 <use name="DataFormats/GEMRecHit"/>
 <use name="DataFormats/CSCRecHit"/>
@@ -20,7 +21,10 @@
 <use name="TrackingTools/TransientTrack"/>
 <use name="TrackingTools/Records"/>
 <use name="RecoMuon/TrackingTools"/>
+<use name="DataFormats/RPCDigi"/>
+<use name="DataFormats/RPCRecHit"/>
 
 <export>
    <lib name="1"/>
 </export>
+
