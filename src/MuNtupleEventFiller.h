@@ -1,5 +1,14 @@
-#ifndef MuNTuple_EventFiller_h
-#define MuNTuple_EventFiller_h
+#ifndef MuNtuple_MuNtupleEventFiller_h
+#define MuNtuple_MuNtupleEventFiller_h
+
+/** \class MuNtupleEventFiller MuNtupleEventFiller.h MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleEventFiller.h
+ *  
+ * Helper class : the digi filler for Phase-1 / Phase2 digis (the DataFormat is the same)
+ *
+ * \author C. Battilana (INFN BO)
+ *
+ *
+ */
 
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleBaseFiller.h"
 
@@ -32,10 +41,19 @@ class MuNtupleEventFiller : public MuNtupleBaseFiller
 
  private :
 
+  /// The DT FEB BX token
+  edm::EDGetTokenT<int> m_dtFedBxToken;
+
   int m_runNumber;
   int  m_lumiBlock;
   int64_t m_eventNumber;
 
+  uint64_t m_timeStamp;
+  
+  int  m_bunchCrossing;
+  int64_t m_orbitNumber;
+  
 };
   
 #endif
+

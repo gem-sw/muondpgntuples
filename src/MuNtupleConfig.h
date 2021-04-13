@@ -19,6 +19,7 @@
 #include "CalibMuon/DTDigiSync/interface/DTTTrigBaseSync.h"
 #include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
 #include "Geometry/DTGeometry/interface/DTGeometry.h"
+#include "Geometry/CSCGeometry/interface/CSCGeometry.h"
 #include "Geometry/GEMGeometry/interface/GEMGeometry.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
@@ -66,6 +67,9 @@ class MuNtupleConfig
 
   /// Handle to the DT geometry
   edm::ESHandle<DTGeometry> m_dtGeometry;
+
+  /// Handle to the CSC geometry
+  edm::ESHandle<CSCGeometry> m_cscGeometry;
 
   /// Handle to the GEM geometry
   edm::ESHandle<GEMGeometry> m_gemGeometry;
