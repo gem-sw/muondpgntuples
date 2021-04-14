@@ -16,9 +16,9 @@
 #include <iostream>
 
 MuNtupleDTTPGThetaFiller::MuNtupleDTTPGThetaFiller(edm::ConsumesCollector && collector,
-					   const std::shared_ptr<MuNtupleConfig> config, 
-					   std::shared_ptr<TTree> tree, const std::string & label,
-					   TriggerTag tag) : 
+						   const std::shared_ptr<MuNtupleConfig> config, 
+						   std::shared_ptr<TTree> tree, const std::string & label,
+						   TriggerTag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag)
 {
 
@@ -27,10 +27,10 @@ MuNtupleDTTPGThetaFiller::MuNtupleDTTPGThetaFiller(edm::ConsumesCollector && col
   switch (m_tag)
     {
     case TriggerTag::TM_IN :
-      iTag = m_config->m_inputTags["ph1TwinMuxInThTag"];
+      iTag = m_config->m_inputTags["twinMuxInThTag"];
       break;
     case TriggerTag::BMTF_IN :
-      iTag = m_config->m_inputTags["ph1BmtfInThTag"];
+      iTag = m_config->m_inputTags["bmtfInThTag"];
     }
 
   if (iTag.label() != "none") m_dtTriggerToken = collector.consumes<L1MuDTChambThContainer>(iTag);

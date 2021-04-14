@@ -15,8 +15,8 @@
 
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
-#include "CalibMuon/DTDigiSync/interface/DTTTrigBaseSync.h"
 #include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
 #include "Geometry/DTGeometry/interface/DTGeometry.h"
 #include "Geometry/CSCGeometry/interface/CSCGeometry.h"
@@ -27,6 +27,10 @@
 #include "TrackingTools/Records/interface/TransientTrackRecord.h"
 
 #include "RecoMuon/TrackingTools/interface/MuonServiceProxy.h"
+#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+
+#include "CalibMuon/DTDigiSync/interface/DTTTrigBaseSync.h"
+#include "MuDPGAnalysis/MuonDPGNtuples/src/DTTrigGeomUtils.h"
 
 #include <map>
 #include <string>
@@ -47,7 +51,8 @@ class MuNtupleConfig
   enum class PhaseTag { PH1 = 0, PH2 };
 
   /// Constructor
-  MuNtupleConfig(const edm::ParameterSet & config);
+  MuNtupleConfig(const edm::ParameterSet & config,
+		 edm::ConsumesCollector && collector);
 
   /// Update EventSetup information
   void getES(const edm::EventSetup & environment);
@@ -63,6 +68,9 @@ class MuNtupleConfig
 
   /// The class to handle DT trigger time pedestals
   std::map<PhaseTag, std::unique_ptr<DTTTrigBaseSync>> m_dtSyncs;
+
+  /// The class to perform DT local trigger coordinate conversions
+  std::unique_ptr<DTTrigGeomUtils> m_trigGeomUtils;
 
   /// Handle to the tracking geometry
   edm::ESHandle<GlobalTrackingGeometry> m_trackingGeometry;
@@ -82,12 +90,19 @@ class MuNtupleConfig
   /// Handle to the Transient Track Builder
   edm::ESHandle<TransientTrackBuilder> m_transientTrackBuilder;
 
-  float residual_x_cut;
+  /// Muon service proxy
+  std::unique_ptr<MuonServiceProxy> m_muonSP;
 
-  bool m_storeRpcDigis, m_storeRpcRecHits;
-    
-  //edm::ParameterSet & muon_service_parameter{};
-  MuonServiceProxy *muon_service;
+  /// HLT config procider
+  HLTConfigProvider m_hltConfig;
+
+  /// Name and indices of the isolated trigger used by muon filler for trigger matching
+  std::string m_isoTrigName;
+  std::vector<int> m_isoTrigIndices;
+
+  /// Name and indices of the non isolated trigger used by muon filler for trigger matching
+  std::string m_trigName;
+  std::vector<int> m_trigIndices;
 
 };
 

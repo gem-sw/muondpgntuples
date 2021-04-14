@@ -1,7 +1,7 @@
-#ifndef MuNtuple_MuNtupleDTEnvironmentFiller_h
-#define MuNtuple_MuNtupleDTEnvironmentFiller_h
+#ifndef MuNtuple_MuNtupleEnvironmentFiller_h
+#define MuNtuple_MuNtupleEnvironmentFiller_h
 
-/** \class MuNtupleDTEnvironmentFiller MuNtupleDTEnvironmentFiller.h MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleDTEnvironmentFiller.h
+/** \class MuNtupleEnvironmentFiller MuNtupleEnvironmentFiller.h MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleEnvironmentFiller.h
  *  
  * Helper class : the pile-up, luminosity and reco vertices filler
  *
@@ -23,18 +23,18 @@
 
 #include <vector>
 
-class MuNtupleDTEnvironmentFiller : public MuNtupleBaseFiller
+class MuNtupleEnvironmentFiller : public MuNtupleBaseFiller
 {
 
  public:
 
   /// Constructor
-  MuNtupleDTEnvironmentFiller(edm::ConsumesCollector && collector,
+  MuNtupleEnvironmentFiller(edm::ConsumesCollector && collector,
 			    const std::shared_ptr<MuNtupleConfig> config, 
 			    std::shared_ptr<TTree> tree, const std::string & label);
 
   ///Destructor
-  virtual ~MuNtupleDTEnvironmentFiller();
+  virtual ~MuNtupleEnvironmentFiller();
  
   /// Intialize function : setup tree branches etc ... 
   virtual void initialize() final;

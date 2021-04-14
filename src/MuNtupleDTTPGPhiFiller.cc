@@ -16,9 +16,9 @@
 #include <iostream>
 
 MuNtupleDTTPGPhiFiller::MuNtupleDTTPGPhiFiller(edm::ConsumesCollector && collector,
-					   const std::shared_ptr<MuNtupleConfig> config, 
-					   std::shared_ptr<TTree> tree, const std::string & label,
-					   TriggerTag tag) : 
+					       const std::shared_ptr<MuNtupleConfig> config, 
+					       std::shared_ptr<TTree> tree, const std::string & label,
+					       TriggerTag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag)
 {
 
@@ -27,13 +27,13 @@ MuNtupleDTTPGPhiFiller::MuNtupleDTTPGPhiFiller(edm::ConsumesCollector && collect
   switch (m_tag)
     {
     case TriggerTag::TM_IN :
-      iTag = m_config->m_inputTags["ph1TwinMuxInTag"];
+      iTag = m_config->m_inputTags["twinMuxInTag"];
       break;
     case TriggerTag::TM_OUT :
-      iTag = m_config->m_inputTags["ph1TwinMuxOutTag"];
+      iTag = m_config->m_inputTags["twinMuxOutTag"];
       break;
     case TriggerTag::BMTF_IN :
-      iTag = m_config->m_inputTags["ph1BmtfInTag"];
+      iTag = m_config->m_inputTags["bmtfInPhiTag"];
     }
 
   if (iTag.label() != "none") m_dtTriggerToken = collector.consumes<L1MuDTChambPhContainer>(iTag);
@@ -121,9 +121,8 @@ void MuNtupleDTTPGPhiFiller::fill(const edm::Event & ev)
 	      m_lt_phi.push_back(trig.phi());
 	      m_lt_phiB.push_back(trig.phiB());
 
-	      // CB: to be implemented
-	      // m_lt_posLoc_x.push_back(m_config->m_trigGeomUtils->trigPos(&trig));
-	      // m_lt_dirLoc_phi.push_back(m_config->m_trigGeomUtils->trigDir(&trig));
+	      m_lt_posLoc_x.push_back(m_config->m_trigGeomUtils->trigPos(&trig));
+	      m_lt_dirLoc_phi.push_back(m_config->m_trigGeomUtils->trigDir(&trig));
 	  
 	      m_lt_bx.push_back(trig.bxNum() - (m_tag == TriggerTag::TM_IN && trig.Ts2Tag() ? 1 : 0));
 	      m_lt_is2nd.push_back(trig.Ts2Tag());

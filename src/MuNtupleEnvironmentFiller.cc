@@ -1,4 +1,4 @@
-/** \class MuNtupleDTEnvironmentFiller MuNtupleDTEnvironmentFiller.cc MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleDTEnvironmentFiller.cc
+/** \class MuNtupleEnvironmentFiller MuNtupleEnvironmentFiller.cc MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleEnvironmentFiller.cc
  *  
  * Helper class : the pile-up, luminosity and reco vertices filler
  *
@@ -7,14 +7,14 @@
  *
  */
 
-#include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleDTEnvironmentFiller.h"
+#include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleEnvironmentFiller.h"
 
 #include "FWCore/Framework/interface/Event.h"
 
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
-MuNtupleDTEnvironmentFiller::MuNtupleDTEnvironmentFiller(edm::ConsumesCollector && collector,
+MuNtupleEnvironmentFiller::MuNtupleEnvironmentFiller(edm::ConsumesCollector && collector,
 						     const std::shared_ptr<MuNtupleConfig> config, 
 						     std::shared_ptr<TTree> tree, const std::string & label) : 
   MuNtupleBaseFiller(config, tree, label)
@@ -34,12 +34,12 @@ MuNtupleDTEnvironmentFiller::MuNtupleDTEnvironmentFiller(edm::ConsumesCollector 
 
 }
 
-MuNtupleDTEnvironmentFiller::~MuNtupleDTEnvironmentFiller() 
+MuNtupleEnvironmentFiller::~MuNtupleEnvironmentFiller() 
 { 
 
 };
 
-void MuNtupleDTEnvironmentFiller:: initialize()
+void MuNtupleEnvironmentFiller:: initialize()
 {
   
   m_tree->Branch((m_label + "_truePileUp").c_str(), &m_truePileUp, (m_label + "_truePileUp/S").c_str());
@@ -63,7 +63,7 @@ void MuNtupleDTEnvironmentFiller:: initialize()
   
 }
 
-void MuNtupleDTEnvironmentFiller::clear()
+void MuNtupleEnvironmentFiller::clear()
 {
 
   m_truePileUp   = MuNtupleBaseFiller::DEFAULT_INT_VAL_POS;
@@ -86,7 +86,7 @@ void MuNtupleDTEnvironmentFiller::clear()
   
 }
 
-void MuNtupleDTEnvironmentFiller::fill(const edm::Event & ev)
+void MuNtupleEnvironmentFiller::fill(const edm::Event & ev)
 {
 
   clear();

@@ -14,15 +14,15 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 
 MuNtupleDTDigiFiller::MuNtupleDTDigiFiller(edm::ConsumesCollector && collector,
-				       const std::shared_ptr<MuNtupleConfig> config, 
-				       std::shared_ptr<TTree> tree, const std::string & label,
-				       Tag tag) : 
+					   const std::shared_ptr<MuNtupleConfig> config, 
+					   std::shared_ptr<TTree> tree, const std::string & label,
+					   Tag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag)
 {
 
   edm::InputTag & iTag = m_tag == Tag::PH1 ?
-                                  m_config->m_inputTags["ph1DtDigiTag"] :
-                                  m_config->m_inputTags["ph2DtDigiTag"];
+                                  m_config->m_inputTags["dtDigiTag"] :
+                                  m_config->m_inputTags["dtDigiTagPh2"];
 
   if (iTag.label() != "none") m_dtDigiToken = collector.consumes<DTDigiCollection>(iTag);
 

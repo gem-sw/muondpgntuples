@@ -1,8 +1,8 @@
 /** \class MuNtupleDigiFiller MuNtupleDigiFiller.cc MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleRPCDigiFiller.cc
  *  
- * Helper class : the digi filler for Phase-1 / Phase2 DT digis (the DataFormat is the same)
+ * Helper class : the digi filler for RPC digis
  *
- * \author C. Battilana (INFN BO)
+ * \author Eliza Melo Da Costa (UERJ)
  *
  *
  */
@@ -24,10 +24,8 @@ MuNtupleRPCDigiFiller::MuNtupleRPCDigiFiller(edm::ConsumesCollector && collector
   MuNtupleBaseFiller(config, tree, label)
 {
 
-
-
   m_rpcDigiToken = collector.consumes<RPCDigiCollection>(m_config->m_inputTags["rpcDigiLabel"]);
-
+  
 }
 
 MuNtupleRPCDigiFiller::~MuNtupleRPCDigiFiller() 
@@ -54,7 +52,6 @@ void MuNtupleRPCDigiFiller::initialize()
   m_tree->Branch((m_label + "_roll").c_str(), &m_roll);
   
   m_tree->Branch((m_label + "_rawId").c_str(), &m_rawId);
-
  
 }
 
@@ -84,39 +81,48 @@ void MuNtupleRPCDigiFiller::clear()
 void MuNtupleRPCDigiFiller::fill(const edm::Event & ev)
 {
 
+  clear();
+  
+  auto rpcDigis = conditionalGet<RPCDigiCollection>(ev, m_rpcDigiToken, "RPCDigiCollection");
+
+  if(rpcDigis.isValid())
+    { 
+
+      auto detUnitIt  = rpcDigis->begin();
+      auto detUnitEnd = rpcDigis->end();
+
+      for (; detUnitIt != detUnitEnd; ++detUnitIt)
+	{
+      
+	  const auto & rpcDetId = (*detUnitIt).first;
+	  const auto & range = (*detUnitIt).second;
+
+	  RPCDigiCollection::const_iterator digiIt  = range.first;
+	  RPCDigiCollection::const_iterator digiEnd = range.second;
 
 
-   clear();
-
-   auto rpcDigis = conditionalGet<RPCDigiCollection>(ev, m_rpcDigiToken, "RPCDigiCollection");
-   if(rpcDigis.isValid()){ 
-    RPCDigiCollection::DigiRangeIterator detUnitIt;
-    for (detUnitIt = rpcDigis->begin(); detUnitIt != rpcDigis->end(); ++detUnitIt){
-
-        const RPCDetId& rpcDetId = (*detUnitIt).first;
-        const RPCDigiCollection::Range& range = (*detUnitIt).second;
-
-        for (RPCDigiCollection::const_iterator digiIt = range.first; digiIt != range.second; ++digiIt){
-            m_strip.push_back(digiIt->strip());  
-            m_bx.push_back(digiIt->bx());  
-            m_time.push_back(digiIt->time());  
-            m_coordinateX.push_back(digiIt->coordinateX());  
-            m_coordinateY.push_back(digiIt->coordinateY());  
-
-            m_region.push_back(rpcDetId.region());
-            m_ring.push_back(rpcDetId.ring());
-            m_station.push_back(rpcDetId.station());
-            m_layer.push_back(rpcDetId.layer());
-            m_sector.push_back(rpcDetId.sector());
-            m_subsector.push_back(rpcDetId.subsector());
-            m_roll.push_back(rpcDetId.roll());
-
-            m_rawId.push_back(rpcDetId.rawId());
-
-            m_nDigi++;
-         }
-
-       }
+	  for (; digiIt != digiEnd; ++digiIt)
+	    {
+	      m_strip.push_back(digiIt->strip());  
+	      m_bx.push_back(digiIt->bx());  
+	      m_time.push_back(digiIt->time());  
+	      m_coordinateX.push_back(digiIt->coordinateX());  
+	      m_coordinateY.push_back(digiIt->coordinateY());  
+	      
+	      m_region.push_back(rpcDetId.region());
+	      m_ring.push_back(rpcDetId.ring());
+	      m_station.push_back(rpcDetId.station());
+	      m_layer.push_back(rpcDetId.layer());
+	      m_sector.push_back(rpcDetId.sector());
+	      m_subsector.push_back(rpcDetId.subsector());
+	      m_roll.push_back(rpcDetId.roll());
+	    
+	      m_rawId.push_back(rpcDetId.rawId());
+	    
+	      m_nDigi++;
+	    }
+	  
+	}
     }
 
   return;

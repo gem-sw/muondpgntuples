@@ -196,21 +196,19 @@ void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetu
     return;
   }
  
-  m_config->muon_service->update(environment);
-
-  edm::ESHandle<Propagator>&& propagator_any = m_config->muon_service->propagator("SteppingHelixPropagatorAny");
+  edm::ESHandle<Propagator>&& propagator_any = m_config->m_muonSP->propagator("SteppingHelixPropagatorAny");
   if (not propagator_any.isValid()) {
     std::cout<< "Any Propagator is invalid" << std::endl;
     return;
   }
   
-  edm::ESHandle<Propagator>&& propagator_along = m_config->muon_service->propagator("SteppingHelixPropagatorAlong");
+  edm::ESHandle<Propagator>&& propagator_along = m_config->m_muonSP->propagator("SteppingHelixPropagatorAlong");
   if (not propagator_along.isValid()) {
     std::cout<< "Along Propagator is invalid" << std::endl;
     return;
   }
 
-  edm::ESHandle<Propagator>&& propagator_opposite = m_config->muon_service->propagator("SteppingHelixPropagatorOpposite");
+  edm::ESHandle<Propagator>&& propagator_opposite = m_config->m_muonSP->propagator("SteppingHelixPropagatorOpposite");
   if (not propagator_opposite.isValid()) {
     std::cout<< "Opposite Propagator is invalid" << std::endl;
     return;

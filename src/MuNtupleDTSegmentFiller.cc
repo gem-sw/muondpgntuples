@@ -19,15 +19,15 @@
 #include "TClonesArray.h"
 
 MuNtupleDTSegmentFiller::MuNtupleDTSegmentFiller(edm::ConsumesCollector && collector,
-				       const std::shared_ptr<MuNtupleConfig> config, 
-				       std::shared_ptr<TTree> tree, const std::string & label,
-				       Tag tag) : 
+						 const std::shared_ptr<MuNtupleConfig> config, 
+						 std::shared_ptr<TTree> tree, const std::string & label,
+						 Tag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag), m_nullVecF()
 {
 
   edm::InputTag & iTag = m_tag == Tag::PH1 ?
-                                  m_config->m_inputTags["ph1DtSegmentTag"] :
-                                  m_config->m_inputTags["ph2DtSegmentTag"];
+                                  m_config->m_inputTags["dtSegmentTag"] :
+                                  m_config->m_inputTags["dtSegmentTagPh2"];
 
   if (iTag.label() != "none") m_dtSegmentToken = collector.consumes<DTRecSegment4DCollection>(iTag);
 

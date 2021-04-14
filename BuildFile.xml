@@ -17,6 +17,7 @@
 <use name="DataFormats/GEMRecHit"/>
 <use name="DataFormats/CSCRecHit"/>
 <use name="DataFormats/CSCDigi"/>
+<use name="HLTrigger/HLTcore"/>
 <use name="DataFormats/MuonReco"/>
 <use name="TrackingTools/TransientTrack"/>
 <use name="TrackingTools/Records"/>

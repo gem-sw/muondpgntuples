@@ -229,14 +229,13 @@ void MuNtupleMuonFiller::fill(const edm::Event & ev)
 	  if (triggerResults.isValid() && triggerEvent.isValid())
 	    {
 
-	      // CB fix me
-	      // const auto & triggerObjects = triggerEvent->getObjects();
+	      const auto & triggerObjects = triggerEvent->getObjects();
 
-	      // bool hasIsoTrig = hasTrigger(m_config->m_isoTrigIndices, triggerObjects, triggerEvent, muon);
-	      // bool hasTrig = hasTrigger(m_config->m_trigIndices, triggerObjects, triggerEvent, muon);
+	      bool hasIsoTrig = hasTrigger(m_config->m_isoTrigIndices, triggerObjects, triggerEvent, muon);
+	      bool hasTrig = hasTrigger(m_config->m_trigIndices, triggerObjects, triggerEvent, muon);
 
-	      // m_firesIsoTrig.push_back(hasIsoTrig);
-	      // m_firesTrig.push_back(hasTrig);
+	      m_firesIsoTrig.push_back(hasIsoTrig);
+	      m_firesTrig.push_back(hasTrig);
 
 	    }
 	  else 
@@ -511,8 +510,7 @@ bool MuNtupleMuonFiller::hasTrigger(std::vector<int> & trigIndices,
 				    const reco::Muon & muon) 
 {
 
-  // CB fixme 
-  /* double matchDeltaR = 999.;
+  double matchDeltaR = 999.;
 
   for(const auto & trigIndex : trigIndices) 
     {
@@ -551,7 +549,5 @@ bool MuNtupleMuonFiller::hasTrigger(std::vector<int> & trigIndices,
     } // loop over muon candidates
 
   return matchDeltaR < 0.1; //CB should get it programmable
-  */
-  return false;
 
 }

@@ -18,15 +18,15 @@
 #include "TVectorF.h"
 
 MuNtupleBmtfFiller::MuNtupleBmtfFiller(edm::ConsumesCollector && collector,
-				     const std::shared_ptr<MuNtupleConfig> config, 
-				     std::shared_ptr<TTree> tree, const std::string & label) : 
+				       const std::shared_ptr<MuNtupleConfig> config, 
+				       std::shared_ptr<TTree> tree, const std::string & label) : 
   MuNtupleBaseFiller(config, tree, label)
 {
 
-  edm::InputTag & iTag = m_config->m_inputTags["ph1BmtfOutTag"];
+  edm::InputTag & iTag = m_config->m_inputTags["bmtfOutTag"];
   if (iTag.label() != "none") m_dtBmtfToken = collector.consumes<l1t::RegionalMuonCandBxCollection>(iTag);
 
-  iTag = m_config->m_inputTags["ph1BmtfInTag"];
+  iTag = m_config->m_inputTags["bmtfInPhiTag"];
   if (iTag.label() != "none") m_dtTpgPhiToken = collector.consumes<L1MuDTChambPhContainer>(iTag);
 
 }
