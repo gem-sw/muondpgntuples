@@ -2,7 +2,6 @@
 #define MuNtuple_MuNtupleGEMMuonFiller_h
 
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleBaseFiller.h"
-#include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleTrackBaseFiller.h"
 
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
@@ -25,7 +24,7 @@
 #include "TVectorF.h"
 #include "TFile.h"
 
-class MuNtupleGEMMuonFiller : public MuNtupleTrackBaseFiller
+class MuNtupleGEMMuonFiller : public MuNtupleBaseFiller
 {
 
  public:
@@ -44,24 +43,24 @@ class MuNtupleGEMMuonFiller : public MuNtupleTrackBaseFiller
   /// Clear branches before event filling 
   virtual void clear() final;
  
-  virtual void fill_new(const edm::Event & ev, const edm::EventSetup & environment) final;
+  virtual void fill(const edm::Event & ev) final;
   
  private:
 
   edm::EDGetTokenT<reco::MuonCollection>      m_muToken;
-  edm::EDGetTokenT<GEMSegmentCollection>  m_gemSegmentToken;
+  edm::EDGetTokenT<GEMRecHitCollection>       m_gemRecHitToken;
+  edm::EDGetTokenT<CSCSegmentCollection>      m_cscSegmentToken;
+  edm::EDGetTokenT<GEMSegmentCollection>      m_gemSegmentToken;
   edm::EDGetTokenT<std::vector<reco::Vertex>> m_primaryVerticesToken;
-  edm::EDGetTokenT<CSCSegmentCollection> m_cscSegmentToken;
-  edm::EDGetTokenT<GEMRecHitCollection> m_gemRecHitToken;
 
   edm::EDGetTokenT<edm::TriggerResults>   m_trigResultsToken;
   edm::EDGetTokenT<trigger::TriggerEvent> m_trigEventToken;
 
-  const GEMRecHit *findMatchedHit(const float,  const GEMRecHitCollection::range );
-  const GEMEtaPartition*  findEtaPartition(const GEMChamber*, const GlobalPoint&);
+  const GEMRecHit* findMatchedHit(const float,  const GEMRecHitCollection::range );
+  const GEMEtaPartition* findEtaPartition(const GEMChamber*, const GlobalPoint&);
 
-  const TrackingRecHit *getHitPtr(edm::OwnVector<TrackingRecHit>::const_iterator iter) const {return &*iter; }
-  const TrackingRecHit *getHitPtr(const trackingRecHit_iterator &iter) const {return &**iter; }
+  const TrackingRecHit* getHitPtr(edm::OwnVector<TrackingRecHit>::const_iterator iter) const {return &*iter; }
+  const TrackingRecHit* getHitPtr(const trackingRecHit_iterator &iter) const {return &**iter; }
 
   TVectorF m_nullVecF;
 

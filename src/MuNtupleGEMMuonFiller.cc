@@ -44,7 +44,7 @@
 MuNtupleGEMMuonFiller::MuNtupleGEMMuonFiller(edm::ConsumesCollector && collector,
 					     const std::shared_ptr<MuNtupleConfig> config, 
 					     std::shared_ptr<TTree> tree, const std::string & label) : 
-MuNtupleTrackBaseFiller(config, tree, label), m_nullVecF()
+MuNtupleBaseFiller(config, tree, label), m_nullVecF()
 {
 
   edm::InputTag & muonTag = m_config->m_inputTags["muonTag"];
@@ -53,21 +53,21 @@ MuNtupleTrackBaseFiller(config, tree, label), m_nullVecF()
   edm::InputTag & primaryVerticesTag = m_config->m_inputTags["primaryVerticesTag"];
   if (primaryVerticesTag.label() != "none") m_primaryVerticesToken = collector.consumes<std::vector<reco::Vertex>>(primaryVerticesTag);
 
-  edm::InputTag & gemSegmentTag = m_config->m_inputTags["gemSegmentTag"];
-  if (gemSegmentTag.label() != "none") m_gemSegmentToken = collector.consumes<GEMSegmentCollection>(gemSegmentTag);
+  edm::InputTag & gemRecHitTag = m_config->m_inputTags["gemRecHitTag"];
+  if (gemRecHitTag.label() != "none") m_gemRecHitToken = collector.consumes<GEMRecHitCollection>(gemRecHitTag);
   
   edm::InputTag & cscSegmentTag = m_config->m_inputTags["cscSegmentTag"];
   if(cscSegmentTag.label() != "none") m_cscSegmentToken = collector.consumes<CSCSegmentCollection>(cscSegmentTag);
 
+  edm::InputTag & gemSegmentTag = m_config->m_inputTags["gemSegmentTag"];
+  if (gemSegmentTag.label() != "none") m_gemSegmentToken = collector.consumes<GEMSegmentCollection>(gemSegmentTag);
+  
   edm::InputTag & trigResultsTag = m_config->m_inputTags["trigResultsTag"];
   if (trigResultsTag.label() != "none") m_trigResultsToken = collector.consumes<edm::TriggerResults>(trigResultsTag);
 
   edm::InputTag & trigEventTag = m_config->m_inputTags["trigEventTag"];
   if (trigEventTag.label() != "none") m_trigEventToken = collector.consumes<trigger::TriggerEvent>(trigEventTag);
 
-  edm::InputTag & gemRecHitTag = m_config->m_inputTags["gemRecHitTag"];
-  if (gemRecHitTag.label() != "none") m_gemRecHitToken = collector.consumes<GEMRecHitCollection>(gemRecHitTag);
-  
 }
 
 MuNtupleGEMMuonFiller::~MuNtupleGEMMuonFiller() 
@@ -176,7 +176,7 @@ void MuNtupleGEMMuonFiller::clear()
       
 }
 
-void MuNtupleGEMMuonFiller::fill_new(const edm::Event & ev, const edm::EventSetup & environment)
+void MuNtupleGEMMuonFiller::fill(const edm::Event & ev)
 {
 
   clear();

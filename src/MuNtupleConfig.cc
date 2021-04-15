@@ -88,6 +88,15 @@ MuNtupleConfig::MuNtupleConfig(const edm::ParameterSet & config,
 void MuNtupleConfig::getES(const edm::EventSetup & environment) 
 { 
 
+  m_muonSP->update(environment);
+     
+}
+
+void MuNtupleConfig::getES(const edm::Run &run, const edm::EventSetup & environment) 
+{
+ 
+  getES(environment);
+
   if (m_inputTags["ph1DtSegmentTag"].label() != "none")
     m_dtSyncs[PhaseTag::PH1]->setES(environment);
 
@@ -107,15 +116,6 @@ void MuNtupleConfig::getES(const edm::EventSetup & environment)
 
   m_trigGeomUtils.reset();
   m_trigGeomUtils = std::make_unique<DTTrigGeomUtils>(dtIdealGeom);
-
-  m_muonSP->update(environment);
-     
-}
-
-void MuNtupleConfig::getES(const edm::Run &run, const edm::EventSetup & environment) 
-{
- 
-  getES(environment);
 
   bool changed = true;
   m_hltConfig.init(run, environment, "HLT", changed);

@@ -27,7 +27,7 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
-#include "RecoMuon/TrackingTools/interface/MuonServiceProxy.h"
+// #include "RecoMuon/TrackingTools/interface/MuonServiceProxy.h"
 
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleGenFiller.h"
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleEventFiller.h"
@@ -77,7 +77,7 @@ MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
   m_fillers.push_back(std::make_unique<MuNtupleGEMSegmentFiller>(consumesCollector(), m_config, m_tree, "gemSegment"));
 
   m_fillers.push_back(std::make_unique<MuNtupleMuonFiller>(consumesCollector(), m_config, m_tree, "mu"));
-  m_trackfillers.push_back(std::make_unique<MuNtupleGEMMuonFiller>(consumesCollector(), m_config, m_tree, "gemMu"));
+  m_fillers.push_back(std::make_unique<MuNtupleGEMMuonFiller>(consumesCollector(), m_config, m_tree, "gemMu"));
 
   m_fillers.push_back(std::make_unique<MuNtupleDTTPGPhiFiller>(consumesCollector(), m_config, m_tree, "ltTwinMuxIn",MuNtupleDTTPGPhiFiller::TriggerTag::TM_IN));
   m_fillers.push_back(std::make_unique<MuNtupleDTTPGPhiFiller>(consumesCollector(), m_config, m_tree, "ltTwinMuxOut", MuNtupleDTTPGPhiFiller::TriggerTag::TM_OUT));
@@ -105,18 +105,11 @@ void MuNtupleProducer::beginJob()
       filler->initialize();
       filler->clear();
     }
-  
-   for (const auto & filler : m_trackfillers)
-    {
-      filler->initialize();
-      filler->clear();
-      }
-  
+
 }
 
 void MuNtupleProducer::beginRun(const edm::Run & run, const edm::EventSetup & environment )
 {
-  environment.get<MuonGeometryRecord>().get(m_rpcGeo);
 
   m_config->getES(run, environment);
 
@@ -132,14 +125,12 @@ void MuNtupleProducer::endJob()
 void MuNtupleProducer::analyze(const edm::Event & ev, const edm::EventSetup & environment )
 {
 
+  m_config->getES(environment);
+
   for (const auto & filler : m_fillers) 
     {
       filler->fill(ev);
     }
-  for (const auto & filler : m_trackfillers)
-   {
-     filler->fill_new(ev,environment);
-     }  
  
  m_tree->Fill();
  
