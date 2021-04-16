@@ -15,6 +15,7 @@
 
 class MuNtupleGEMDigiFiller : public MuNtupleBaseFiller
 {
+
  public: 
 
   //Constructor
@@ -33,15 +34,13 @@ class MuNtupleGEMDigiFiller : public MuNtupleBaseFiller
   virtual void clear() final;
 
   /// Fill tree branches for a given events
-  virtual void fill(const edm::Event & ev) final;
-  
+  virtual void fill(const edm::Event & ev) final;  
 
  private:
   
-  
   /// The digi token
   edm::EDGetTokenT<GEMDigiCollection> m_gemDigiToken;
-  edm::ESGetToken<GEMGeometry, MuonGeometryRecord> geomToken_;
+
   /// The variables holding
   /// all digi related information
 

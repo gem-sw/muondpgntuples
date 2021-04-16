@@ -15,6 +15,7 @@
 
 class MuNtupleGEMRecHitFiller : public MuNtupleBaseFiller
 {
+
  public:
 
   //Constructor
@@ -31,12 +32,10 @@ class MuNtupleGEMRecHitFiller : public MuNtupleBaseFiller
   virtual void clear() final;
 
   virtual void fill(const edm::Event & ev) final;
-
  
  private:
 
-  edm::ESGetToken<GEMGeometry, MuonGeometryRecord> geomToken_;
-  edm::EDGetTokenT<GEMRecHitCollection> m_rechit_token_;
+  edm::EDGetTokenT<GEMRecHitCollection> m_gemRecHitsToken;
   
   unsigned int m_nRecHits;
   
