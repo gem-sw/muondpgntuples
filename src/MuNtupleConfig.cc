@@ -89,13 +89,15 @@ void MuNtupleConfig::getES(const edm::EventSetup & environment)
 { 
 
   m_muonSP->update(environment);
+  environment.get<GlobalTrackingGeometryRecord>().get(m_trackingGeometry);
+  environment.get<TransientTrackRecord>().get("TransientTrackBuilder", m_transientTrackBuilder);
      
 }
 
 void MuNtupleConfig::getES(const edm::Run &run, const edm::EventSetup & environment) 
 {
  
-  getES(environment);
+  // CB getES(environment);
 
   if (m_inputTags["ph1DtSegmentTag"].label() != "none")
     m_dtSyncs[PhaseTag::PH1]->setES(environment);
@@ -107,9 +109,6 @@ void MuNtupleConfig::getES(const edm::Run &run, const edm::EventSetup & environm
   environment.get<MuonGeometryRecord>().get(m_cscGeometry);
   environment.get<MuonGeometryRecord>().get(m_rpcGeometry);
   environment.get<MuonGeometryRecord>().get(m_gemGeometry);
-
-  environment.get<GlobalTrackingGeometryRecord>().get(m_trackingGeometry);
-  environment.get<TransientTrackRecord>().get("TransientTrackBuilder", m_transientTrackBuilder);
 
   edm::ESHandle<DTGeometry> dtIdealGeom; 
   environment.get<MuonGeometryRecord>().get("idealForDigi",dtIdealGeom);

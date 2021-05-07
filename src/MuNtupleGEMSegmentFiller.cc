@@ -136,8 +136,8 @@ void MuNtupleGEMSegmentFiller::fill(const edm::Event & ev)
 	      m_seg_dirGlb_phi.push_back(dirGlb.phi());
 	      m_seg_dirGlb_eta.push_back(dirGlb.eta());
 
-	      auto time = segment->time();
-	      auto time_err = segment->timeErr();
+	      auto time = MuNtupleBaseFiller::DEFAULT_DOUBLE_VAL; // CB fix this segment->time();
+	      auto time_err = MuNtupleBaseFiller::DEFAULT_DOUBLE_VAL; // CB fix thissegment->timeErr();
 
 	      auto chi2 = segment->chi2();
 

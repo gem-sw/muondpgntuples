@@ -7,7 +7,7 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                   genPartTag = cms.untracked.InputTag("none"),
 
                                   puInfoTag = cms.untracked.InputTag("none"),
-                                  lumiScalerTag = cms.untracked.InputTag("scalersRawToDigi"),
+                                  lumiScalerTag = cms.untracked.InputTag("none"),
                                   primaryVerticesTag = cms.untracked.InputTag("offlinePrimaryVertices"),
 
                                   dtDigiTag = cms.untracked.InputTag("muonDTDigis"),
@@ -48,6 +48,7 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                                                             doWirePropCorrection = cms.bool(False),
                                                                             doT0Correction = cms.bool(True),
                                                                             tTrigLabel = cms.string(''),
+                                                                            t0Label = cms.string(''),
                                                                             debug = cms.untracked.bool(False)
                                                                         ),
 
@@ -58,7 +59,8 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                                                             wirePropCorrType = cms.int32(0),
                                                                             doWirePropCorrection = cms.bool(False),
                                                                             doT0Correction = cms.bool(True),
-                                                                            tTrigLabel = cms.string(''),
+                                                                            tTrigLabel = cms.string('ph2'),
+                                                                            t0Label = cms.string('ph2'),
                                                                             debug = cms.untracked.bool(False)
                                                                         )
 

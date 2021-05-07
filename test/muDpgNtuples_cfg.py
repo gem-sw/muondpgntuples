@@ -9,42 +9,39 @@ import sys
 options = VarParsing.VarParsing()
 
 options.register('globalTag',
-                 '111X_dataRun3_Express_v4',
-                 #'111X_upgrade2018_realistic_v1', #default value
+                 '113X_mcRun3_2021_realistic_v9', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Global Tag")
 
 options.register('nEvents',
-                 #1000, #to run on a sub-sample
-                 -1, #default value
+                 1000, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Maximum number of processed events")
 
 options.register('inputFolder',
-                 '/store/express/Commissioning2020/ExpressCosmics/FEVT/Express-v1/000/338/714',
+                 '/RelValSingleMuPt100/CMSSW_11_3_0_pre6-113X_mcRun3_2021_realistic_v9-v1/GEN-SIM-RECO', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "EOS folder with input files")
 
 options.register('secondaryInputFolder',
-                 '', #default value
+                 '/RelValSingleMuPt100/CMSSW_11_3_0_pre6-113X_mcRun3_2021_realistic_v9-v1/GEN-SIM-DIGI-RAW', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "EOS folder with input files for secondary files")
 
 options.register('ntupleName',
-                 './MuDPGNtuple_11_1_2_patch2_plusRPCDigi.root', #default value
+                 './MuDPGNtuple_11_3_0_pre6_Run3_SingleMuPt100.root', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Folder and name ame for output ntuple")
 
 options.parseArguments()
 
-process = cms.Process("MUNTUPLES",eras.Run3)#Run2_2018)
+process = cms.Process("MUNTUPLES",eras.Run3)
 
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 
@@ -53,43 +50,28 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True),
 process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(options.nEvents))
 
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.GlobalTag.globaltag = cms.string(options.globalTag)
 
 process.source = cms.Source("PoolSource",
-                            
-        fileNames = cms.untracked.vstring(),
-        secondaryFileNames = cms.untracked.vstring()
-
+                            fileNames = cms.untracked.vstring(),
+                            secondaryFileNames = cms.untracked.vstring()
 )
 
-if "eos/cms" in options.inputFolder:
-    files = subprocess.check_output(['xrdfs', 'root://eoscms.cern.ch/', 'ls', options.inputFolder])
-    process.source.fileNames = ["root://eoscms.cern.ch//" + f for f in files.split()]
+files = subprocess.check_output(['dasgoclient', '--query', 'file dataset={}'.format(options.inputFolder)])
+process.source.fileNames = [f for f in files.split() if ".root" in f]
 
-elif "store/" in options.inputFolder:
-    files = subprocess.check_output(['xrdfs', 'root://xrootd-cms.infn.it/', 'ls', options.inputFolder])
-    process.source.fileNames = ["root://xrootd-cms.infn.it//" +f for f in files.split()]
-
-else:
-    files = subprocess.check_output(['ls', options.inputFolder])
-    process.source.fileNames = ["file://" + options.inputFolder + "/" + f for f in files.split()]
+print(process.source.fileNames)
 
 if options.secondaryInputFolder != "" :
-    files = subprocess.check_output(["ls", options.secondaryInputFolder])
-    process.source.secondaryFileNames = ["file://" + options.secondaryInputFolder + "/" + f for f in files.split()]
- 
+    files = subprocess.check_output(['dasgoclient', '--query', 'file dataset={}'.format(options.secondaryInputFolder)])
+    process.source.secondaryFileNames = [f for f in files.split() if ".root" in f]
+
+    print(process.source.secondaryFileNames)
 
 process.TFileService = cms.Service('TFileService',
-        fileName = cms.string(options.ntupleName)
-    )
-
-process.load("EventFilter.RPCRawToDigi.rpcUnpacker_cfi")
-import EventFilter.RPCRawToDigi.rpcUnpacker_cfi
-muonRPCDigis = EventFilter.RPCRawToDigi.rpcUnpacker_cfi.rpcunpacker.clone()
-muonRPCDigis.InputLabel = 'rawDataCollector'
-process.rpcunpacker.InputLabel = 'rawDataCollector'
+                                   fileName = cms.string(options.ntupleName)
+)
 
 process.load('Configuration/StandardSequences/GeometryRecoDB_cff')
 process.load("Configuration.StandardSequences.MagneticField_cff")
@@ -102,10 +84,9 @@ process.load('TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorOp
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('MuDPGAnalysis.MuonDPGNtuples.muNtupleProducer_cfi')
 
-process.muNtupleProducer.rpcDigiLabel = cms.untracked.InputTag('rpcunpacker')
-
-
 process.p = cms.Path(process.muonDTDigis
-                     + process.rpcunpacker 
+                     + process.muonRPCDigis
+                     + process.twinMuxStage2Digis
+                     + process.bmtfDigis
                      + process.muNtupleProducer)
 
