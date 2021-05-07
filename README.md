@@ -5,16 +5,18 @@ Repository to host common ntuples developed and maintained by the CMS muon DPGs.
 ## Install and run the ntuples:
 
 ```
-cmsrel CMSSW_11_1_2_patch2
-cd CMSSW_11_1_2_patch2/src/
+cmsrel CMSSW_11_3_0_pre6
+cd CMSSW_11_3_0_pre6/src/
 cmsenv
 
-git clone -b RPCInformation https://gitlab.cern.ch/eliza/muondpgntuples.git MuDPGAnalysis/MuonDPGNtuples
-
+git clone https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples.git MuDPGAnalysis/MuonDPGNtuples
 
 scram b -j 5
 
 cd MuDPGAnalysis/MuonDPGNtuples/test/
+
+voms-proxy-init -voms cms -valid 192:0
+
 cmsRun muDpgNtuples_cfg.py
 ```
 
