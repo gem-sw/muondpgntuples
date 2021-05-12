@@ -49,7 +49,7 @@ class MuNtupleRPCDigiFiller : public MuNtupleBaseFiller
   edm::EDGetTokenT<RPCDigiCollection> m_rpcDigiToken;
   
   // members for branch filling
-  int m_nDigi;
+  int m_nDigis;
 
   std::vector<uint16_t> m_strip;
   std::vector<int32_t> m_bx;

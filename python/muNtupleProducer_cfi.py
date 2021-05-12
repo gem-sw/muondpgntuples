@@ -6,6 +6,8 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
 
                                   genPartTag = cms.untracked.InputTag("none"),
 
+                                  dtFedBxTag = cms.untracked.InputTag("none"),
+
                                   puInfoTag = cms.untracked.InputTag("none"),
                                   lumiScalerTag = cms.untracked.InputTag("none"),
                                   primaryVerticesTag = cms.untracked.InputTag("offlinePrimaryVertices"),

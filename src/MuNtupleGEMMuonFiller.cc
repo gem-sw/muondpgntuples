@@ -348,9 +348,10 @@ void MuNtupleGEMMuonFiller::fill(const edm::Event & ev)
                                   const BoundPlane& bound_plane = chamber->surface();
                                         
                                   const auto& dest_state = propagator->propagate(start_state, bound_plane);
-                                  if (not dest_state.isValid())
                                     {
-				      std::cout << "failed to propagate" << std::endl;
+				      // CB : comment out cout, is there a better
+				      // strategy than a loop on all GEM chambers?
+				      // std::cout << "failed to propagate" << std::endl;
                                       continue;
                                     }
 
@@ -359,7 +360,8 @@ void MuNtupleGEMMuonFiller::fill(const edm::Event & ev)
                                   const GEMEtaPartition* eta_partition = findEtaPartition(chamber, dest_global_pos);
                                   if (eta_partition == nullptr)
                                     {
-				      std::cout << "failed to find GEMEtaPartition" << std::endl; 
+				      // CB : comment out cout, why thus should fail?
+				      // std::cout << "failed to find GEMEtaPartition" << std::endl; 
                                       continue;
                                     }
 
@@ -381,6 +383,9 @@ void MuNtupleGEMMuonFiller::fill(const edm::Event & ev)
                                   m_propagated_charge.push_back(muon.charge());
                         
                                   m_propagatedLoc_x.push_back(dest_local_pos.x());
+                                  m_propagatedLoc_y.push_back(dest_local_pos.y());
+                                  m_propagatedLoc_z.push_back(dest_local_pos.z());
+
                                   m_propagatedLoc_phi.push_back(dest_local_pos.phi());
                                   m_propagatedLoc_r.push_back(dest_local_pos.perp());
                                   

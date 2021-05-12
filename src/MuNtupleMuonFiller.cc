@@ -48,7 +48,7 @@ MuNtupleMuonFiller::MuNtupleMuonFiller(edm::ConsumesCollector && collector,
   edm::InputTag & primaryVerticesTag = m_config->m_inputTags["primaryVerticesTag"];
   if (primaryVerticesTag.label() != "none") m_primaryVerticesToken = collector.consumes<std::vector<reco::Vertex>>(primaryVerticesTag);
 
-  edm::InputTag & dtSegmentTag = m_config->m_inputTags["ph1DtSegmentTag"];
+  edm::InputTag & dtSegmentTag = m_config->m_inputTags["dtSegmentTag"];
   if (dtSegmentTag.label() != "none") m_dtSegmentToken = collector.consumes<DTRecSegment4DCollection>(dtSegmentTag);
 
   edm::InputTag & trigResultsTag = m_config->m_inputTags["trigResultsTag"];

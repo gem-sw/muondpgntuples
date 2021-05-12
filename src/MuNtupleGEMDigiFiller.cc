@@ -36,7 +36,7 @@ void MuNtupleGEMDigiFiller::initialize()
 
   m_tree->Branch((m_label + "_g_r").c_str(), &m_digi_g_r);
   m_tree->Branch((m_label + "_g_phi").c_str(), &m_digi_g_phi);
-  m_tree->Branch((m_label + "g_eta").c_str(), &m_digi_g_eta);
+  m_tree->Branch((m_label + "_g_eta").c_str(), &m_digi_g_eta);
   m_tree->Branch((m_label + "_g_x").c_str(), &m_digi_g_x);
   m_tree->Branch((m_label + "_g_y").c_str(), &m_digi_g_y);
   m_tree->Branch((m_label + "_g_z").c_str(), &m_digi_g_z);

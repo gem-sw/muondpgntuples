@@ -25,7 +25,7 @@ MuNtupleRPCRecHitFiller::MuNtupleRPCRecHitFiller(edm::ConsumesCollector && colle
   MuNtupleBaseFiller(config, tree, label)
 {
   
-  m_rpcRecHitToken = collector.consumes<RPCRecHitCollection>(m_config->m_inputTags["rpcRecHitLabel"]);
+  m_rpcRecHitToken = collector.consumes<RPCRecHitCollection>(m_config->m_inputTags["rpcRecHitTag"]);
 
 }
 

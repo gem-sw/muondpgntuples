@@ -24,7 +24,7 @@ MuNtupleRPCDigiFiller::MuNtupleRPCDigiFiller(edm::ConsumesCollector && collector
   MuNtupleBaseFiller(config, tree, label)
 {
 
-  m_rpcDigiToken = collector.consumes<RPCDigiCollection>(m_config->m_inputTags["rpcDigiLabel"]);
+  m_rpcDigiToken = collector.consumes<RPCDigiCollection>(m_config->m_inputTags["rpcDigiTag"]);
   
 }
 
@@ -35,6 +35,8 @@ MuNtupleRPCDigiFiller::~MuNtupleRPCDigiFiller()
 
 void MuNtupleRPCDigiFiller::initialize()
 {
+
+  m_tree->Branch((m_label + "_nDigis").c_str(), &m_nDigis, (m_label + "_nDigis/i").c_str());
 
   m_tree->Branch((m_label + "_strip").c_str(), &m_strip, (m_label + "_strip/I").c_str());
   m_tree->Branch((m_label + "_strip").c_str(), &m_strip);
@@ -58,7 +60,7 @@ void MuNtupleRPCDigiFiller::initialize()
 void MuNtupleRPCDigiFiller::clear()
 {
 
-  m_nDigi   = 0;
+  m_nDigis   = 0;
 
   m_strip.clear();
   m_bx.clear();
@@ -100,7 +102,6 @@ void MuNtupleRPCDigiFiller::fill(const edm::Event & ev)
 	  RPCDigiCollection::const_iterator digiIt  = range.first;
 	  RPCDigiCollection::const_iterator digiEnd = range.second;
 
-
 	  for (; digiIt != digiEnd; ++digiIt)
 	    {
 	      m_strip.push_back(digiIt->strip());  
@@ -119,7 +120,7 @@ void MuNtupleRPCDigiFiller::fill(const edm::Event & ev)
 	    
 	      m_rawId.push_back(rpcDetId.rawId());
 	    
-	      m_nDigi++;
+	      m_nDigis++;
 	    }
 	  
 	}

@@ -129,8 +129,8 @@ void MuNtupleEnvironmentFiller::fill(const edm::Event & ev)
 	  const auto& firstPV = (*primaryVtx)[0];
 	  
 	  m_pv_x = firstPV.position().x();
-	  m_pv_x = firstPV.position().x();
-	  m_pv_x = firstPV.position().x();
+	  m_pv_y = firstPV.position().x();
+	  m_pv_z = firstPV.position().x();
     
 	  m_pv_xxErr = firstPV.covariance(0,0);
 	  m_pv_yyErr = firstPV.covariance(1,1);
