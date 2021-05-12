@@ -41,3 +41,6 @@ __init__.py
 
 # Intermediate files
 *~
+
+# Log files
+*.log
