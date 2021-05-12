@@ -38,6 +38,12 @@ options.register('ntupleName',
                  VarParsing.VarParsing.varType.string,
                  "Folder and name ame for output ntuple")
 
+options.register('runOnMC',
+                 True, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.bool,
+                 "Apply customizations to run on MC")
+
 options.parseArguments()
 
 process = cms.Process("MUNTUPLES",eras.Run3)
@@ -86,7 +92,12 @@ process.load('MuDPGAnalysis.MuonDPGNtuples.muNtupleProducer_cfi')
 
 process.p = cms.Path(process.muonDTDigis
                      + process.muonRPCDigis
+                     + process.muonGEMDigis
                      + process.twinMuxStage2Digis
                      + process.bmtfDigis
                      + process.muNtupleProducer)
+
+if options.runOnMC :
+    from MuDPGAnalysis.MuonDPGNtuples.customiseMuNtuples_cff import customiseForRunningOnMC
+    customiseForRunningOnMC(process,"p")
 
