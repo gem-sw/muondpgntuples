@@ -26,9 +26,11 @@ These ntuples are intended to consist mostly of flat collection of `std::vectors
 
 The class steering ntuple production is called `MuNtupleProducer`. It runs a list of helper classes, called _fillers_ inheriting from `MuNtupleBaseFiller`.
 
-Each _filler_ must include the `initialize()`, `clear()` and `fill()` functions, which are called within the `MuNtupleProducer` `beginJob()` and `analyze()` functions to perform the ntuple filling logic.
+Each _filler_ must include the `initialize()`, `clear()` and `fill()` member functions, which are called within the `MuNtupleProducer` `beginJob()` and `analyze()` methods to perform the ntuple filling logic.
 
-Many fillers of the same type may exist, for example in the DT slice-test the same data format for phase-1 and phase-2 digis is used, implying that the same _filler_ helper class can be reused to reduce code duplication. Different flavours of a filler are configured using _labels_ and _tags_. A _label_ specifies the initial part of the name of the branches that a _filler_ writes into the output `TTree`, for example `dtDigi_time` versus `ph2DtDigi_time`. A _tag_ is used to configure the specific behaviour of a given filler, for example phase-1 and phase-2 digis from the DT slice-test are produced with different `InputTags`, hence, in the DT digi _filler_ case, the _tag_ will specify what input collection should be used.
+Many fillers of the same type may exist, for example in the DT slice-test the same data format for phase-1 and phase-2 digis is used, implying that the same _filler_ helper class can be reused to reduce code duplication. 
+
+Different flavours of a filler are configured using _labels_ and _tags_. A _label_ specifies the initial part of the name of the branches that a _filler_ writes into the output `TTree`, for example `dtDigi_time` versus `ph2DtDigi_time`. A _tag_ is used to configure the specific behaviour of a given filler, for example phase-1 and phase-2 digis from the DT slice-test are produced with different `InputTags`, hence, in the DT digi _filler_ case, the _tag_ will can specify what input collection should be used.
 
 The _fillers_ included in the ntuple are defined in the `MuNtupleProducer` constructor with as in the following:
 
@@ -41,13 +43,15 @@ The _fillers_ included in the ntuple are defined in the `MuNtupleProducer` const
 [...]
 ```
 
-`dtDigi` or `ph2DtDigi` are _labels_ , and `MuNtupleDTDigiFiller::Tag::PH1` or `MuNtupleDTDigiFiller::Tag::PH1` are _tags_ of the same _filler_ base class.
+`dtDigi` or `ph2DtDigi` are _labels_ , and `MuNtupleDTDigiFiller::Tag::PH1` or `MuNtupleDTDigiFiller::Tag::PH2` are _tags_. They are used to handle two different instances of the `MuNtupleDTDigiFiller` _filler_ base class as discussed above.
 
 A configuration helper class, called `MuNtupleConfig` also exists.
 
-It deals with: _(i)_ the list of `InputTags` used by all _fillers_, _(ii)_ geometry, calibration and other `EventSetup` quantities.
+It deals with: _(i)_ the list of `InputTags` used by all _fillers_, _(ii)_ geometry, calibration and other `EventSetup` related quantities.
 
 The configuration of the ntuple producer is available under `python/muNtupleProducer_cfi.py`.
+
+By default `python/muNtupleProducer_cfi.py` should be configured in a case where data from real collisions is processed starting from a `RAW-RECO format`. Customisations, as the one to run on simulated samples, should be host in `python/customiseMuNtuples_cff.py`.
 
 ## How to include quantities from your subsystem into the ntuple:
 
@@ -56,6 +60,7 @@ The configuration of the ntuple producer is available under `python/muNtupleProd
 1. Include your filler into the `m_fillers` vector of the `plugins/MuNtupleProducer.{h,cc}` steering class;
 1. Include all the needed configuration parameters in `python/muNtupleProducer_cfi.py;
 1. Adjust `Buildfile.xml` as needed;
+1. Modify `test/muDpgNtuples_cfg.py` as needed (e.g. to add unpacking of digis from your detector);
 1. Compile, run ` cmsRun test/muDpgNtuples_cfg.py` and check that the ntuple includes your new quantities.
 
 **NOTEs**: 
@@ -63,8 +68,4 @@ The configuration of the ntuple producer is available under `python/muNtupleProd
 - the `MuNtupleBaseFiller` class includes placeholders for default values in the ntuple (e.g. `DEFAULT_INT_VAL`), please use those (and not "magic" numbers) when filling with default values is needed;
 - the `MuNtupleBaseFiller` class includes a `conditionalGet()` function that provides a default dump in case a collection is missing in the input file, please use it.
 
-A complete example showing the changes to include phase-1 and phase-2 DT digis is available [here](https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples/-/compare/dt_segment_and_digis...dt_segment_only) (please note that the opposite was done, digis were removed, but anyhow this lists all the needed steps).
-
-
-
-
+A complete example showing the changes to include phase-1 and phase-2 DT digis is available [here](https://gitlab.cern.ch/cms-muon-dpgo/muondpgntuples/-/compare/dt_segment_and_digis...dt_segment_only) (please note that the opposite was done, digis were removed from the package, but anyhow the differences show what to be done in case of inclusion of a new filler).
