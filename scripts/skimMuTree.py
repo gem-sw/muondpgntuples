@@ -1,14 +1,16 @@
 #!/usr/bin/env python
+# pylint: disable=superfluous-parens
 """
-This program can be used to skim muon DPG ntuples by applying cuts 
-on an input tree and copy the result to an output ROOT file. As well, 
-you can remove specific branches from the tree. The main purpose of 
+This program can be used to skim muon DPG ntuples by applying cuts
+on an input tree and copy the result to an output ROOT file. As well,
+you can remove specific branches from the tree. The main purpose of
 the script is reducing the file size to speed up the processing during
 analysis. Note, that you can load multiple files at once from your
 locale storage device and EOS."
 """
 
 import argparse
+from jsonToCut import json_to_cut
 
 #----------------------
 # Setup argument parser
@@ -35,6 +37,10 @@ PARSER.add_argument("-c", "--cut",
                     default="",
                     help="Cut string which is used on input tree (applied as CopyTree() \
                           argument), e.g., \"mu_pt>30 && abs(mu_eta)<2.4\"")
+
+PARSER.add_argument("-j", "--json",
+                    default="",
+                    help="CMS JSON certification file to be appended to cut string")
 
 PARSER.add_argument("-r", "--remove",
                     default="",
@@ -80,10 +86,13 @@ for fileName in ARGS.fileNamesInput.split(" "):
 if ARGS.verbosity == 1:
     print("")
 
+CUT_STRING = json_to_cut(ARGS.json) if ARGS.json else ""
+CUT_STRING.append(" {}".format(ARGS.cut))
+
 # Deactivate and reactivate branches from 'remove' and 'keep' arguments
 if ARGS.remove == "all":
     for branch in TREE_INPUT.GetListOfBranches():
-        if not branch.GetName() in ARGS.cut:
+        if not branch.GetName() in CUT_STRING:
             TREE_INPUT.SetBranchStatus(branch.GetName(), 0)
 else:
     BRANCHES_REMOVE = ARGS.remove.split(" ")
@@ -101,7 +110,7 @@ if BRANCHES_KEEP != [""]:
 FILE_OUTPUT = ROOT.TFile.Open(ARGS.fileNameOutput, "recreate")
 DIR_OUTPUT = FILE_OUTPUT.mkdir(ARGS.directory)
 DIR_OUTPUT.cd()
-TREE_OUTPUT = TREE_INPUT.CopyTree(ARGS.cut)
+TREE_OUTPUT = TREE_INPUT.CopyTree(CUT_STRING)
 
 # Print some info if verbosity is set to 1
 if ARGS.verbosity == 1:
