@@ -51,6 +51,7 @@
 #include "MuDPGAnalysis/MuonDPGNtuples/src/MuNtupleBmtfFiller.h"
 
 #include <iostream>
+#include <algorithm>
 
 MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
 {
@@ -100,11 +101,13 @@ MuNtupleProducer::MuNtupleProducer( const edm::ParameterSet & config )
 void MuNtupleProducer::beginJob() 
 {
 
-  for (const auto & filler : m_fillers) 
+  auto initialize = [](auto const& filler)
     {
-      filler->initialize();
-      filler->clear();
-    }
+      filler->initialize(); 
+      filler->clear(); 
+    };
+
+  std::for_each(m_fillers.begin(), m_fillers.end(), initialize);
 
 }
 
@@ -127,12 +130,12 @@ void MuNtupleProducer::analyze(const edm::Event & ev, const edm::EventSetup & en
 
   m_config->getES(environment);
 
-  for (const auto & filler : m_fillers) 
-    {
+  auto fill = [& ev](auto const& filler)
+    { 
       filler->fill(ev);
-    }
- 
- m_tree->Fill();
+    };
+
+  std::for_each(m_fillers.begin(), m_fillers.end(), fill);
  
 }
 

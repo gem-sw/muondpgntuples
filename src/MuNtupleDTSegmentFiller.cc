@@ -212,12 +212,9 @@ void MuNtupleDTSegmentFiller::fill(const edm::Event & ev)
       for (; chambIt != chambEnd; ++chambIt)
 	{
 	  
-	  const auto range = segments4D->get(*chambIt);
+	  const auto & range = segments4D->get(*chambIt);
 	  
-	  auto segment4D    = range.first;  // CB check naming
-	  auto segment4DEnd = range.second;
-	  
-	  for (; segment4D != segment4DEnd; ++segment4D)
+	  for (auto segment4D = range.first; segment4D != range.second; ++segment4D)
 	    {
 	      
 	      auto wheel   = (*chambIt).wheel();

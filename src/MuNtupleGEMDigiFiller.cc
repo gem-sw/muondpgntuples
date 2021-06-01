@@ -79,8 +79,7 @@ void MuNtupleGEMDigiFiller::fill(const edm::Event & ev)
 
       for (; gemDetIdIt != gemDetIdEnd; ++gemDetIdIt)
 	{
-	  const GEMDetId& gemDetId = (*gemDetIdIt).first;
-	  const GEMDigiCollection::Range& range = (*gemDetIdIt).second;
+	  const auto & [gemDetId, range] = (*gemDetIdIt);
 
 	  const GEMEtaPartition* roll = m_config->m_gemGeometry->etaPartition(gemDetId);
 	  const BoundPlane& surface = roll->surface();

@@ -83,12 +83,9 @@ void MuNtupleDTDigiFiller::fill(const edm::Event & ev)
       for (; dtLayerIdIt != dtLayerIdEnd; ++dtLayerIdIt)
 	{
 
-	  const auto & dtLayerId = (*dtLayerIdIt).first;
-
-	  auto digiIt  = (*dtLayerIdIt).second.first;
-	  auto digiEnd = (*dtLayerIdIt).second.second;
+	  const auto & [dtLayerId, range] = (*dtLayerIdIt);
 	  
-	  for (; digiIt != digiEnd; ++digiIt)
+	  for (auto digiIt = range.first; digiIt != range.second; ++digiIt)
 	    {
 	      m_digi_wheel.push_back(dtLayerId.wheel());
 	      m_digi_sector.push_back(dtLayerId.sector());

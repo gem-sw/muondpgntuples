@@ -96,13 +96,9 @@ void MuNtupleRPCDigiFiller::fill(const edm::Event & ev)
       for (; detUnitIt != detUnitEnd; ++detUnitIt)
 	{
       
-	  const auto & rpcDetId = (*detUnitIt).first;
-	  const auto & range = (*detUnitIt).second;
+	  const auto & [rpcDetId, range] = (*detUnitIt);
 
-	  RPCDigiCollection::const_iterator digiIt  = range.first;
-	  RPCDigiCollection::const_iterator digiEnd = range.second;
-
-	  for (; digiIt != digiEnd; ++digiIt)
+	  for (auto digiIt = range.first; digiIt != range.second; ++digiIt)
 	    {
 	      m_strip.push_back(digiIt->strip());  
 	      m_bx.push_back(digiIt->bx());  
