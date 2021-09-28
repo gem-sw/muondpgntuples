@@ -1,13 +1,13 @@
 - [MuonDPGNtuples](#muondpgntuples)
-  * [Installation:](#installation-)
+  * [Installation](#installation-)
     + [Download](#download)
     + [Compile](#compile)
   * [How to run the Ntuplzier](#how-to-run-the-ntuplzier)
     + [Run the NTuplizer interactively](#run-the-ntuplizer-interactively)
     + [Run the NTuplizer with CRAB](#run-the-ntuplizer-with-crab)
-  * [Overview of the ntuple structure:](#overview-of-the-ntuple-structure-)
-  * [How to include quantities from your subsystem into the ntuple:](#how-to-include-quantities-from-your-subsystem-into-the-ntuple-)
-  * [Current Branches:](#current-branches-)
+  * [Overview of the ntuple structure](#overview-of-the-ntuple-structure-)
+  * [How to include quantities from your subsystem into the ntuple](#how-to-include-quantities-from-your-subsystem-into-the-ntuple-)
+  * [Current Branches](#current-branches-)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
@@ -19,7 +19,7 @@ So far, two datasets have been tested as compatible with the current version:
 /Cosmics/Commissioning2021-PromptReco-v1/AOD
 /ExpressCosmics/Commissioning2021-Express-v1/FEVT
 ```
-## Installation:
+## Installation
 ### Download 
 You may want to use a specific CMSSW  version (from now on referred as CMSSW_XXXX) and global tag based on the data you are about to Ntuplize:
 - For **P5 data** check  [Global Tags for Conditions Data ](https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions)
@@ -62,7 +62,7 @@ Change the settings above based on your intended use.
    * Output site name and output path name
 - Execute `crab submit -c  ./CRAB_SUB/crabConfig.py`
 
-## Overview of the ntuple structure:
+## Overview of the ntuple structure
 
 These ntuples are intended to consist mostly of flat collection of `std::vectors<>`, with the exception for few `TClonesArrays` which handle "vectors of vectors".
 
@@ -91,7 +91,7 @@ It deals with: _(i)_ the list of `InputTags` used by all _fillers_, _(ii)_ geome
 
 The configuration of the ntuple producer is available under `python/muNtupleProducer_cfi.py`.
 
-## How to include quantities from your subsystem into the ntuple:
+## How to include quantities from your subsystem into the ntuple
 
 1. Create one (or more) filler(s), which inherit from `src/MuNtupleBaseFiller.{h,cc}` under the `src/` dircetory;
 1. Add all relevant `InputTag` and `EventSetup` quantities into `src/MuNtupleConfig.{h,cc}`;
@@ -107,7 +107,7 @@ The configuration of the ntuple producer is available under `python/muNtupleProd
 
 A complete example showing how to include phase-1 and phase-2 DT digis is available [here]().
 
-## Current Branches:
+## Current Branches
 ```
         muNtupleProducer (TDirectory)
                 MuDPGTree (TTree)
