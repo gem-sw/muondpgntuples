@@ -6,21 +6,18 @@
 
 
 MuNtupleGEMRecHitFiller::MuNtupleGEMRecHitFiller(edm::ConsumesCollector && collector,
-					     const std::shared_ptr<MuNtupleConfig> config,
-					     std::shared_ptr<TTree> tree, const std::string & label) :
-
-  MuNtupleBaseFiller(config, tree, label)
+						 const std::shared_ptr<MuNtupleConfig> config,
+						 std::shared_ptr<TTree> tree, const std::string & label) : MuNtupleBaseFiller(config, tree, label)
 {
-
+  
   edm::InputTag &iTag = m_config->m_inputTags["gemRecHitTag"];
-  if (iTag.label() != "none")
-    m_gemRecHitsToken = collector.consumes<GEMRecHitCollection>(iTag);
-
+  if (iTag.label() != "none") m_rechit_token_ = collector.consumes<GEMRecHitCollection>(iTag);
+  
 }
 
 MuNtupleGEMRecHitFiller::~MuNtupleGEMRecHitFiller()
 {
-
+  
 };
 
 void MuNtupleGEMRecHitFiller::initialize()
@@ -28,7 +25,8 @@ void MuNtupleGEMRecHitFiller::initialize()
   
   m_tree->Branch((m_label + "_nRecHits").c_str(), &m_nRecHits, (m_label + "_nRecHits/i").c_str());
 
-  m_tree->Branch((m_label + "_cluster_size").c_str(), &m_rechit_cluster_size);
+  m_tree->Branch((m_label + "_cluster_size").c_str(), &m_rechit_cluster_size); 
+  m_tree->Branch((m_label + "_firstClusterStrip").c_str(), &m_rechit_firstClusterStrip);
   m_tree->Branch((m_label + "_bx").c_str(), &m_rechit_bx);
 
   m_tree->Branch((m_label + "_region").c_str(), &m_rechit_region);
@@ -41,6 +39,9 @@ void MuNtupleGEMRecHitFiller::initialize()
   m_tree->Branch((m_label + "_loc_x").c_str(), &m_rechit_loc_x);
   m_tree->Branch((m_label + "_loc_y").c_str(), &m_rechit_loc_y);
   m_tree->Branch((m_label + "_loc_z").c_str(), &m_rechit_loc_z);
+
+  m_tree->Branch((m_label + "_loc_errX").c_str(), &m_rechit_loc_errX);
+  m_tree->Branch((m_label + "_loc_errY").c_str(), &m_rechit_loc_errY);
 
   m_tree->Branch((m_label + "_g_r").c_str(), &m_rechit_g_r);
   m_tree->Branch((m_label + "_g_phi").c_str(), &m_rechit_g_phi);
@@ -57,6 +58,7 @@ void MuNtupleGEMRecHitFiller::clear()
 
   m_rechit_cluster_size.clear();
   m_rechit_bx.clear();
+  m_rechit_firstClusterStrip.clear();
 
   m_rechit_region.clear();
   m_rechit_chamber.clear();
@@ -69,6 +71,9 @@ void MuNtupleGEMRecHitFiller::clear()
   m_rechit_loc_y.clear();
   m_rechit_loc_z.clear();
  
+  m_rechit_loc_errX.clear();
+  m_rechit_loc_errY.clear();
+
   m_rechit_g_r.clear();
   m_rechit_g_phi.clear();
   m_rechit_g_x.clear();
@@ -83,46 +88,57 @@ void MuNtupleGEMRecHitFiller::fill(const edm::Event & ev)
   
   clear();
 
-  auto gemRecHits = conditionalGet<GEMRecHitCollection>(ev, m_gemRecHitsToken,"GEMRecHitCollection");
+  edm::Handle<GEMRecHitCollection> rechit_collection;
+  ev.getByToken(m_rechit_token_,rechit_collection);
+  const auto gem = m_config->m_gemGeometry; 
 
-  if (gemRecHits.isValid())
-    {
+    
+    if (rechit_collection.isValid())
+      {
+	
+	for (auto rechit = rechit_collection->begin(); rechit != rechit_collection->end(); rechit++)
+	  {
+	    GEMDetId gem_id{rechit->gemId()};
+	    	    	    
+	    int roll = gem_id.roll();
+	    int region = gem_id.region();
+	    int chamber = gem_id.chamber();
+	    int layer = gem_id.layer();
 
-      auto recHitIt  = gemRecHits->begin();
-      auto recHitEnd = gemRecHits->end();
+	    m_rechit_etaPartition.push_back(roll);
+	    m_rechit_region.push_back(region);
+	    m_rechit_chamber.push_back(chamber);
+	    m_rechit_layer.push_back(layer);
 
-      for (; recHitIt != recHitEnd; ++recHitIt)
-	{
-	  GEMDetId gemDetId(recHitIt->gemId());
+	    const BoundPlane& EtaPartSurface = gem->idToDet(gem_id)->surface();
+	    GlobalPoint&& rechit_global_pos = EtaPartSurface.toGlobal(rechit->localPosition());
+	    LocalPoint&& rechit_local_pos = gem->idToDet(gem_id.chamberId())->toLocal(rechit_global_pos);
+	    
+	    m_rechit_loc_r.push_back(rechit_local_pos.perp());
+	    m_rechit_loc_phi.push_back(rechit_local_pos.phi());
+	    m_rechit_loc_x.push_back(rechit_local_pos.x());
+	    m_rechit_loc_y.push_back(rechit_local_pos.y());
+	    m_rechit_loc_z.push_back(rechit_local_pos.z());
 
-	  m_rechit_etaPartition.push_back(gemDetId.roll());
-	  m_rechit_region.push_back(gemDetId.region());
-	  m_rechit_chamber.push_back(gemDetId.chamber());
-	  m_rechit_layer.push_back(gemDetId.layer());
+	    m_rechit_g_r.push_back(rechit_global_pos.perp());
+	    m_rechit_g_phi.push_back(rechit_global_pos.phi());
+	    m_rechit_g_x.push_back(rechit_global_pos.x());
+	    m_rechit_g_y.push_back(rechit_global_pos.y());
+	    m_rechit_g_z.push_back(rechit_global_pos.z());
 
-	  const BoundPlane& surface = m_config->m_gemGeometry->idToDet(gemDetId)->surface();
-	  const auto recHitPosLoc = recHitIt->localPosition();
-	  const auto recHitPosGlob = surface.toGlobal(recHitPosLoc);
+	    auto cluster_size = rechit->clusterSize();
+	    auto firstClusterStrip = rechit->firstClusterStrip();
+	    int bx = rechit->BunchX();
+	    
+	    m_rechit_cluster_size.push_back(cluster_size);
+	    m_rechit_bx.push_back(bx);
+	    m_rechit_firstClusterStrip.push_back(firstClusterStrip);
 
-	  m_rechit_loc_r.push_back(recHitPosLoc.perp());
-	  m_rechit_loc_phi.push_back(recHitPosLoc.phi());
-	  m_rechit_loc_x.push_back(recHitPosLoc.x());
-	  m_rechit_loc_y.push_back(recHitPosLoc.y());
-	  m_rechit_loc_z.push_back(recHitPosLoc.z());
+	    m_nRecHits++;
+	  }
+	//std::cout << " # rechits: " << m_nRecHits << std::endl;
 
-	  m_rechit_g_r.push_back(recHitPosGlob.perp());
-	  m_rechit_g_phi.push_back(recHitPosGlob.phi());
-	  m_rechit_g_x.push_back(recHitPosGlob.x());
-	  m_rechit_g_y.push_back(recHitPosGlob.y());
-	  m_rechit_g_z.push_back(recHitPosGlob.z());
-
-	  m_rechit_cluster_size.push_back(recHitIt->clusterSize());
-	  m_rechit_bx.push_back(recHitIt->BunchX());
-
-	  m_nRecHits++;
-	}
-
-    }
+      }
 
   return;
 

@@ -22,7 +22,6 @@
 
 class MuNtupleProducer : public edm::one::EDAnalyzer<edm::one::SharedResources,edm::one::WatchRuns>
 {
-
  public:
 
   /// Constructor
@@ -53,7 +52,7 @@ class MuNtupleProducer : public edm::one::EDAnalyzer<edm::one::SharedResources,e
 
   /// The container with all the fillers
   std::vector<std::unique_ptr<MuNtupleBaseFiller>> m_fillers;
-
+  
 };
 
 #endif

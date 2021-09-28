@@ -5,15 +5,16 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 
 MuNtupleGEMDigiFiller::MuNtupleGEMDigiFiller(edm::ConsumesCollector && collector,
-					     const std::shared_ptr<MuNtupleConfig> config,
-					     std::shared_ptr<TTree> tree, const std::string & label) :
+					   const std::shared_ptr<MuNtupleConfig> config,
+					   std::shared_ptr<TTree> tree, const std::string & label) :
 
   MuNtupleBaseFiller(config, tree, label)
 {
 
   edm::InputTag & iTag = m_config->m_inputTags["gemDigiTag"];
-  if (iTag.label() != "none") 
-    m_gemDigiToken = collector.consumes<GEMDigiCollection>(iTag);
+if (iTag.label() != "none") m_gemDigiToken = collector.consumes<GEMDigiCollection>(iTag);
+
+ 
 
 }
 
@@ -36,11 +37,12 @@ void MuNtupleGEMDigiFiller::initialize()
 
   m_tree->Branch((m_label + "_g_r").c_str(), &m_digi_g_r);
   m_tree->Branch((m_label + "_g_phi").c_str(), &m_digi_g_phi);
-  m_tree->Branch((m_label + "_g_eta").c_str(), &m_digi_g_eta);
+  m_tree->Branch((m_label + "g_eta").c_str(), &m_digi_g_eta);
   m_tree->Branch((m_label + "_g_x").c_str(), &m_digi_g_x);
   m_tree->Branch((m_label + "_g_y").c_str(), &m_digi_g_y);
   m_tree->Branch((m_label + "_g_z").c_str(), &m_digi_g_z);
   
+
 }
 
 void MuNtupleGEMDigiFiller::clear()
@@ -69,47 +71,48 @@ void MuNtupleGEMDigiFiller::fill(const edm::Event & ev)
 
   clear();
 
+  const auto gem = m_config->m_gemGeometry;
   auto gemDigis = conditionalGet<GEMDigiCollection>(ev, m_gemDigiToken,"GEMDigiCollection");
 
   if (gemDigis.isValid())
     {
-
-      auto gemDetIdIt  = gemDigis->begin();
-      auto gemDetIdEnd = gemDigis->end();
-
-      for (; gemDetIdIt != gemDetIdEnd; ++gemDetIdIt)
+      for (auto range_iter = gemDigis->begin(); range_iter != gemDigis->end(); range_iter++) \
 	{
-	  const auto & [gemDetId, range] = (*gemDetIdIt);
+	  const GEMDetId& gem_id = (*range_iter).first;
+	  const GEMDigiCollection::Range& range = (*range_iter).second;
 
-	  const GEMEtaPartition* roll = m_config->m_gemGeometry->etaPartition(gemDetId);
+	  const GEMEtaPartition* roll = gem->etaPartition(gem_id);
 	  const BoundPlane& surface = roll->surface();
 
-	  for (auto digi = range.first; digi != range.second; ++digi)
-	    {
-	      m_digi_station.push_back(gemDetId.station());
-	      m_digi_roll.push_back(gemDetId.roll());
-	      m_digi_strip.push_back(digi->strip());
-	      m_digi_bx.push_back(digi->bx());
+	  for (auto digi = range.first; digi != range.second; ++digi) {
 
-	      m_digi_region.push_back(gemDetId.region());
+	    m_digi_station.push_back(gem_id.station());
+	    m_digi_roll.push_back(gem_id.roll());
+	    m_digi_strip.push_back(digi->strip());
+	    m_digi_bx.push_back(digi->bx());
 
-	      const LocalPoint& localPos = roll->centreOfStrip(digi->strip());
-	      const GlobalPoint& globalPos = surface.toGlobal(localPos);
+	    m_digi_region.push_back(gem_id.region());
 
-	      m_digi_g_r.push_back(globalPos.perp());
-	      m_digi_g_phi.push_back(globalPos.phi());
-	      m_digi_g_eta.push_back(globalPos.eta());
-	      m_digi_g_x.push_back(globalPos.x());
-	      m_digi_g_y.push_back(globalPos.y());
-	      m_digi_g_z.push_back(globalPos.z());
+	    const LocalPoint& local_pos = roll->centreOfStrip(digi->strip());
+	    const GlobalPoint& global_pos = surface.toGlobal(local_pos);
+
+	    m_digi_g_r.push_back(global_pos.perp());
+	    m_digi_g_phi.push_back(global_pos.phi());
+	    m_digi_g_eta.push_back(global_pos.eta());
+	    m_digi_g_x.push_back(global_pos.x());
+	    m_digi_g_y.push_back(global_pos.y());
+	    m_digi_g_z.push_back(global_pos.z());
 	    
-	      m_nDigis++;
-	    }
-	  
+	    m_nDigis++;
+	   
+
+	  }
+
 	}
       
     }
+
   
   return;
-  
+
 }

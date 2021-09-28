@@ -3,47 +3,26 @@ from RecoMuon.TrackingTools.MuonServiceProxy_cff import MuonServiceProxy
 
 muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                   MuonServiceProxy,
+                                  ph1DtDigiTag = cms.untracked.InputTag("muonDTDigis"),
+                                  ph2DtDigiTag = cms.untracked.InputTag("none"),
 
-                                  genPartTag = cms.untracked.InputTag("none"),
+                                  ph1DtSegmentTag = cms.untracked.InputTag("dt4DSegments"),        
+                                  ph2DtSegmentTag = cms.untracked.InputTag("none"),
 
-                                  dtFedBxTag = cms.untracked.InputTag("none"),
-
-                                  puInfoTag = cms.untracked.InputTag("none"),
-                                  lumiScalerTag = cms.untracked.InputTag("none"),
-                                  primaryVerticesTag = cms.untracked.InputTag("offlinePrimaryVertices"),
-
-                                  dtDigiTag = cms.untracked.InputTag("muonDTDigis"),
-                                  rpcDigiTag = cms.untracked.InputTag("muonRPCDigis"),
+                                  ph1DTtTrigMode = cms.untracked.string('DTTTrigSyncFromDB'),
+                                  isMC = cms.bool(False),
                                   gemDigiTag = cms.untracked.InputTag("muonGEMDigis"),
-                                  #dtDigiTagPh2 = cms.untracked.InputTag("none"),
-
-                                  rpcRecHitTag = cms.untracked.InputTag("rpcRecHits"),
+                                  #gemDigiTag = cms.untracked.InputTag("simMuonGEMDigis"),
                                   gemRecHitTag = cms.untracked.InputTag("gemRecHits"),
-
-                                  dtSegmentTag = cms.untracked.InputTag("dt4DSegments"),        
                                   gemSegmentTag = cms.untracked.InputTag("gemSegments"),
                                   cscSegmentTag = cms.untracked.InputTag("cscSegments"),
-                                  #dtSegmentTagPh2 = cms.untracked.InputTag("none"),
-
                                   muonTag = cms.untracked.InputTag("muons"),
-
-                                  trigEventTag = cms.untracked.InputTag("none"),
-                                  trigResultsTag = cms.untracked.InputTag("none"),
-
-                                  trigName = cms.untracked.string('none'),
-                                  isoTrigName = cms.untracked.string('none'),
-
-                                  twinMuxInTag  = cms.untracked.InputTag("twinMuxStage2Digis","PhIn"),
-                                  twinMuxOutTag = cms.untracked.InputTag("twinMuxStage2Digis","PhOut"),
-                                  bmtfInPhiTag  = cms.untracked.InputTag("bmtfDigis"),
-
-                                  twinMuxInThTag = cms.untracked.InputTag("twinMuxStage2Digis","ThIn"),
-                                  bmtfInThTag  = cms.untracked.InputTag("bmtfDigis"),
-
-                                  bmtfOutTag  = cms.untracked.InputTag("bmtfDigis", "BMTF"),
-
-                                  dttTrigMode = cms.untracked.string('DTTTrigSyncFromDB'),
-                                  dttTrigModeConfig = cms.untracked.PSet(vPropWire = cms.double(24.4),
+                                  
+                                  gemSimHitTag = cms.untracked.InputTag("g4SimHits","MuonGEMHits"),
+                                  muonSimTag = cms.untracked.InputTag("muons"),
+                                  genParticlesTag = cms.untracked.InputTag("genParticles"),
+                                  primaryVerticesTag = cms.untracked.InputTag("offlinePrimaryVertices"),
+                                  ph1DTtTrigModeConfig = cms.untracked.PSet(vPropWire = cms.double(24.4),
                                                                             doTOFCorrection = cms.bool(False),
                                                                             tofCorrType = cms.int32(2),
                                                                             wirePropCorrType = cms.int32(0),
@@ -52,18 +31,6 @@ muNtupleProducer = cms.EDAnalyzer("MuNtupleProducer",
                                                                             tTrigLabel = cms.string(''),
                                                                             t0Label = cms.string(''),
                                                                             debug = cms.untracked.bool(False)
-                                                                        ),
-
-                                  dttTrigModePh2 = cms.untracked.string('DTTTrigSyncFromDB'),
-                                  dttTrigModeConfigPh2 = cms.untracked.PSet(vPropWire = cms.double(24.4),
-                                                                            doTOFCorrection = cms.bool(False),
-                                                                            tofCorrType = cms.int32(2),
-                                                                            wirePropCorrType = cms.int32(0),
-                                                                            doWirePropCorrection = cms.bool(False),
-                                                                            doT0Correction = cms.bool(True),
-                                                                            tTrigLabel = cms.string('ph2'),
-                                                                            t0Label = cms.string('ph2'),
-                                                                            debug = cms.untracked.bool(False)
                                                                         )
+)
 
-                            )
