@@ -15,7 +15,6 @@
 
 class MuNtupleGEMRecHitFiller : public MuNtupleBaseFiller
 {
-
  public:
 
   //Constructor
@@ -32,14 +31,17 @@ class MuNtupleGEMRecHitFiller : public MuNtupleBaseFiller
   virtual void clear() final;
 
   virtual void fill(const edm::Event & ev) final;
+
  
  private:
 
-  edm::EDGetTokenT<GEMRecHitCollection> m_gemRecHitsToken;
+  edm::ESGetToken<GEMGeometry, MuonGeometryRecord> geomToken_;
+  edm::EDGetTokenT<GEMRecHitCollection> m_rechit_token_;
   
   unsigned int m_nRecHits;
   
   std::vector<int> m_rechit_cluster_size;
+  std::vector<int> m_rechit_firstClusterStrip;
   std::vector<int> m_rechit_bx;
 
   std::vector<int> m_rechit_region;
@@ -52,7 +54,10 @@ class MuNtupleGEMRecHitFiller : public MuNtupleBaseFiller
   std::vector<float>  m_rechit_loc_x;
   std::vector<float>  m_rechit_loc_y;
   std::vector<float>  m_rechit_loc_z;
-  
+
+  std::vector<float>  m_rechit_loc_errX;
+  std::vector<float>  m_rechit_loc_errY;
+
   std::vector<float>  m_rechit_g_r;
   std::vector<float>  m_rechit_g_phi;
   std::vector<float>  m_rechit_g_x;

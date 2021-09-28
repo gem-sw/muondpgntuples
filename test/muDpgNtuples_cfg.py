@@ -9,78 +9,94 @@ import sys
 options = VarParsing.VarParsing()
 
 options.register('globalTag',
-                 '113X_mcRun3_2021_realistic_v9', #default value
+                 #'112X_mcRun3_2021_realistic_v10',
+                 #'113X_dataRun3_Express_v4', #CUZET EXPRESS
+                 '113X_dataRun3_Prompt_v3',  # CRUZET PROMPTRECO
+                 #'113X_dataRun3_Express_v2', #MWGR4
+                 #'112X_mcRun3_2021cosmics_realistic_deco_v13',#MC_Cosmics
+                 #'112X_dataRun3_Prompt_v2',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Global Tag")
 
 options.register('nEvents',
-                 1000, #default value
+                 -1, #to run on a sub-sample
+                 #-1, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Maximum number of processed events")
 
+options.register('isMC',
+                 True, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.bool,
+                 "Maximum number of processed events")
+
 options.register('inputFolder',
-                 '/RelValSingleMuPt100/CMSSW_11_3_0_pre6-113X_mcRun3_2021_realistic_v9-v1/GEN-SIM-RECO', #default value
+                 #'/eos/cms/store/express/Commissioning2021/ExpressCosmics/FEVT/Express-v1/000/344/068/00000/',
+                 "/eos/cms/store/data/Commissioning2021/Cosmics/RAW/v1/000/342/810/00000/",
+                 #'/lustre/cms/store/user/gmilella/MCCosmics_0T_10M/CRAB3_MC_Cosmics_RECOCOSMICS_0T_10M/210309_112327/0000',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "EOS folder with input files")
 
 options.register('secondaryInputFolder',
-                 '/RelValSingleMuPt100/CMSSW_11_3_0_pre6-113X_mcRun3_2021_realistic_v9-v1/GEN-SIM-DIGI-RAW', #default value
+                 '', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "EOS folder with input files for secondary files")
 
 options.register('ntupleName',
-                 './MuDPGNtuple_11_3_0_pre6_Run3_SingleMuPt100.root', #default value
+                 'MuDPGNtuple.root', #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
-                 "Folder and name ame for output ntuple")
-
-options.register('runOnMC',
-                 True, #default value
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.bool,
-                 "Apply customizations to run on MC")
+                 "Name for output ntuple")
 
 options.parseArguments()
 
-process = cms.Process("MUNTUPLES",eras.Run3)
-
-#process.load('Configuration.StandardSequences.Services_cff')
-process.load('FWCore.MessageService.MessageLogger_cfi')
-
-process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True),
-                                        numberOfThreads = cms.untracked.uint32(4))
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(options.nEvents))
+process = cms.Process("MUNTUPLES",eras.Run3)#Run2_2018)
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.load('FWCore.MessageService.MessageLogger_cfi')
+
+process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True))
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(options.nEvents))
+
+#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+
 process.GlobalTag.globaltag = cms.string(options.globalTag)
 
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring(),
-                            secondaryFileNames = cms.untracked.vstring()
+        fileNames = cms.untracked.vstring(),
+        secondaryFileNames = cms.untracked.vstring()
 )
 
-files = subprocess.check_output(['dasgoclient', '--query', 'file dataset={}'.format(options.inputFolder)])
-process.source.fileNames = [f for f in files.split() if ".root" in f]
+if "eos/cms" in options.inputFolder:
+    files = subprocess.check_output(['xrdfs', 'root://eoscms.cern.ch/', 'ls', options.inputFolder])
+    process.source.fileNames = ["root://eoscms.cern.ch//" + f for f in files.split()]
 
-print(process.source.fileNames)
+
+elif "/xrd/" in options.inputFolder:
+    files = subprocess.check_output(['xrdfs', 'root://cms-xrdr.sdfarm.kr/', 'ls', options.inputFolder])
+    process.source.fileNames = ["root://cms-xrdr.sdfarm.kr//" +f for f in files.split()]
+
+else:
+    files = subprocess.check_output(['ls', options.inputFolder])
+    process.source.fileNames = ["file://" + options.inputFolder + "/" + f for f in files.split()]
 
 if options.secondaryInputFolder != "" :
-    files = subprocess.check_output(['dasgoclient', '--query', 'file dataset={}'.format(options.secondaryInputFolder)])
-    process.source.secondaryFileNames = [f for f in files.split() if ".root" in f]
+    files = subprocess.check_output(["ls", options.secondaryInputFolder])
+    process.source.secondaryFileNames = ["file://" + options.secondaryInputFolder + "/" + f for f in files.split()]
 
-    print(process.source.secondaryFileNames)
 
 process.TFileService = cms.Service('TFileService',
-                                   fileName = cms.string(options.ntupleName)
-)
+        fileName = cms.string(options.ntupleName)
+    )
 
 process.load('Configuration/StandardSequences/GeometryRecoDB_cff')
-process.load("Configuration.StandardSequences.MagneticField_cff")
+process.load("Configuration.StandardSequences.MagneticField_0T_cff")
+#process.load("Configuration.StandardSequences.MagneticField_cff")
 
 process.load("TrackingTools/TransientTrack/TransientTrackBuilder_cfi")
 process.load('TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorAny_cfi')
@@ -90,14 +106,9 @@ process.load('TrackPropagation.SteppingHelixPropagator.SteppingHelixPropagatorOp
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('MuDPGAnalysis.MuonDPGNtuples.muNtupleProducer_cfi')
 
-process.p = cms.Path(process.muonDTDigis
-                     + process.muonRPCDigis
-                     + process.muonGEMDigis
-                     + process.twinMuxStage2Digis
-                     + process.bmtfDigis
-                     + process.muNtupleProducer)
+process.p = cms.Path(#process.muonDTDigis + 
+                      process.muNtupleProducer)
 
-if options.runOnMC :
-    from MuDPGAnalysis.MuonDPGNtuples.customiseMuNtuples_cff import customiseForRunningOnMC
-    customiseForRunningOnMC(process,"p")
+process.muNtupleProducer.isMC = cms.bool(options.isMC)
 
+process.p = cms.Path(process.muNtupleProducer)

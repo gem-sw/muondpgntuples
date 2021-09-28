@@ -14,15 +14,15 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 
 MuNtupleDTDigiFiller::MuNtupleDTDigiFiller(edm::ConsumesCollector && collector,
-					   const std::shared_ptr<MuNtupleConfig> config, 
-					   std::shared_ptr<TTree> tree, const std::string & label,
-					   Tag tag) : 
+				       const std::shared_ptr<MuNtupleConfig> config, 
+				       std::shared_ptr<TTree> tree, const std::string & label,
+				       Tag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag)
 {
 
   edm::InputTag & iTag = m_tag == Tag::PH1 ?
-                                  m_config->m_inputTags["dtDigiTag"] :
-                                  m_config->m_inputTags["dtDigiTagPh2"];
+                                  m_config->m_inputTags["ph1DtDigiTag"] :
+                                  m_config->m_inputTags["ph2DtDigiTag"];
 
   if (iTag.label() != "none") m_dtDigiToken = collector.consumes<DTDigiCollection>(iTag);
 
@@ -83,9 +83,12 @@ void MuNtupleDTDigiFiller::fill(const edm::Event & ev)
       for (; dtLayerIdIt != dtLayerIdEnd; ++dtLayerIdIt)
 	{
 
-	  const auto & [dtLayerId, range] = (*dtLayerIdIt);
+	  const auto & dtLayerId = (*dtLayerIdIt).first;
+
+	  auto digiIt  = (*dtLayerIdIt).second.first;
+	  auto digiEnd = (*dtLayerIdIt).second.second;
 	  
-	  for (auto digiIt = range.first; digiIt != range.second; ++digiIt)
+	  for (; digiIt != digiEnd; ++digiIt)
 	    {
 	      m_digi_wheel.push_back(dtLayerId.wheel());
 	      m_digi_sector.push_back(dtLayerId.sector());

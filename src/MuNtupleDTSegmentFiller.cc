@@ -19,15 +19,15 @@
 #include "TClonesArray.h"
 
 MuNtupleDTSegmentFiller::MuNtupleDTSegmentFiller(edm::ConsumesCollector && collector,
-						 const std::shared_ptr<MuNtupleConfig> config, 
-						 std::shared_ptr<TTree> tree, const std::string & label,
-						 Tag tag) : 
+				       const std::shared_ptr<MuNtupleConfig> config, 
+				       std::shared_ptr<TTree> tree, const std::string & label,
+				       Tag tag) : 
   MuNtupleBaseFiller(config, tree, label), m_tag(tag), m_nullVecF()
 {
 
   edm::InputTag & iTag = m_tag == Tag::PH1 ?
-                                  m_config->m_inputTags["dtSegmentTag"] :
-                                  m_config->m_inputTags["dtSegmentTagPh2"];
+                                  m_config->m_inputTags["ph1DtSegmentTag"] :
+                                  m_config->m_inputTags["ph2DtSegmentTag"];
 
   if (iTag.label() != "none") m_dtSegmentToken = collector.consumes<DTRecSegment4DCollection>(iTag);
 
@@ -212,9 +212,12 @@ void MuNtupleDTSegmentFiller::fill(const edm::Event & ev)
       for (; chambIt != chambEnd; ++chambIt)
 	{
 	  
-	  const auto & range = segments4D->get(*chambIt);
+	  const auto range = segments4D->get(*chambIt);
 	  
-	  for (auto segment4D = range.first; segment4D != range.second; ++segment4D)
+	  auto segment4D    = range.first;  // CB check naming
+	  auto segment4DEnd = range.second;
+	  
+	  for (; segment4D != segment4DEnd; ++segment4D)
 	    {
 	      
 	      auto wheel   = (*chambIt).wheel();

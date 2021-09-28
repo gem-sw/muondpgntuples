@@ -48,19 +48,19 @@ class MuNtupleGEMMuonFiller : public MuNtupleBaseFiller
  private:
 
   edm::EDGetTokenT<reco::MuonCollection>      m_muToken;
-  edm::EDGetTokenT<GEMRecHitCollection>       m_gemRecHitToken;
-  edm::EDGetTokenT<CSCSegmentCollection>      m_cscSegmentToken;
-  edm::EDGetTokenT<GEMSegmentCollection>      m_gemSegmentToken;
+  edm::EDGetTokenT<GEMSegmentCollection>  m_gemSegmentToken;
   edm::EDGetTokenT<std::vector<reco::Vertex>> m_primaryVerticesToken;
+  edm::EDGetTokenT<CSCSegmentCollection> m_cscSegmentToken;
+  edm::EDGetTokenT<GEMRecHitCollection> m_gemRecHitToken;
 
   edm::EDGetTokenT<edm::TriggerResults>   m_trigResultsToken;
   edm::EDGetTokenT<trigger::TriggerEvent> m_trigEventToken;
 
-  const GEMRecHit* findMatchedHit(const float,  const GEMRecHitCollection::range );
-  const GEMEtaPartition* findEtaPartition(const GEMChamber*, const GlobalPoint&);
+  const GEMRecHit *findMatchedHit(const float,  const GEMRecHitCollection::range );
+  const GEMEtaPartition*  findEtaPartition(const GEMChamber*, const GlobalPoint&);
 
-  const TrackingRecHit* getHitPtr(edm::OwnVector<TrackingRecHit>::const_iterator iter) const {return &*iter; }
-  const TrackingRecHit* getHitPtr(const trackingRecHit_iterator &iter) const {return &**iter; }
+  const TrackingRecHit *getHitPtr(edm::OwnVector<TrackingRecHit>::const_iterator iter) const {return &*iter; }
+  const TrackingRecHit *getHitPtr(const trackingRecHit_iterator &iter) const {return &**iter; }
 
   TVectorF m_nullVecF;
 
@@ -80,8 +80,9 @@ class MuNtupleGEMMuonFiller : public MuNtupleBaseFiller
   std::vector<bool>  m_isGEM;
   std::vector<bool>  m_isCSC;
   std::vector<bool> m_isME11;
-  
-  std::vector<bool> m_propagatedisME11;
+
+  std::vector<bool> m_propagated_isME11;
+  std::vector<bool> m_propagated_isGEM;
 
   std::vector<bool>  m_isLoose;  // Loose muon ID
   std::vector<bool>  m_isMedium; // Medium muon ID
@@ -102,16 +103,53 @@ class MuNtupleGEMMuonFiller : public MuNtupleBaseFiller
   std::vector<float> m_propagated_eta;
   std::vector<float> m_propagated_charge;
 
+  std::vector<float> m_propagated_TrackNormChi2;
+
+  std::vector<float> m_propagated_numberOfValidPixelHits;
+  std::vector<float> m_propagated_innerTracker_ValidFraction;
+  std::vector<float> m_propagated_numberOfValidTrackerHits;
+
   std::vector<float> m_propagatedLoc_x;
   std::vector<float> m_propagatedLoc_y;
   std::vector<float> m_propagatedLoc_z;
   std::vector<float> m_propagatedLoc_r;
   std::vector<float> m_propagatedLoc_phi;
+  std::vector<float> m_propagatedLoc_dirX;
+  std::vector<float> m_propagatedLoc_dirY;
+  std::vector<float> m_propagatedLoc_dirZ;
+  std::vector<float> m_propagatedLoc_errX;
+  std::vector<float> m_propagatedLoc_errY;
+
   std::vector<float> m_propagatedGlb_x;
   std::vector<float> m_propagatedGlb_y;
   std::vector<float> m_propagatedGlb_z;
   std::vector<float> m_propagatedGlb_r;
   std::vector<float> m_propagatedGlb_phi;
+  std::vector<float> m_propagatedGlb_errX;
+  std::vector<float> m_propagatedGlb_errY;
+  std::vector<float> m_propagatedGlb_phierr;
+  std::vector<float> m_propagatedGlb_rerr;
+
+  std::vector<float> m_propagated_EtaPartition_centerX;
+  std::vector<float> m_propagated_EtaPartition_centerY;
+  std::vector<float> m_propagated_EtaPartition_phiMax;
+  std::vector<float> m_propagated_EtaPartition_phiMin;
+  std::vector<float> m_propagated_EtaPartition_rMax;
+  std::vector<float> m_propagated_EtaPartition_rMin;
+
+  std::vector<int> m_propagated_nME1hits;
+  std::vector<int> m_propagated_nME2hits;
+  std::vector<int> m_propagated_nME3hits;
+  std::vector<int> m_propagated_nME4hits;
+
+  std::vector<float> m_propagated_Innermost_x;
+  std::vector<float> m_propagated_Innermost_y;
+  std::vector<float> m_propagated_Innermost_z;
+
+  std::vector<float> m_propagated_Outermost_x;
+  std::vector<float> m_propagated_Outermost_y;
+  std::vector<float> m_propagated_Outermost_z;
+
   
 };
 
