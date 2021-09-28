@@ -1,13 +1,13 @@
 - [MuonDPGNtuples](#muondpgntuples)
-  * [Installation](#installation-)
+  * [Installation](#installation)
     + [Download](#download)
     + [Compile](#compile)
   * [How to run the Ntuplzier](#how-to-run-the-ntuplzier)
     + [Run the NTuplizer interactively](#run-the-ntuplizer-interactively)
     + [Run the NTuplizer with CRAB](#run-the-ntuplizer-with-crab)
-  * [Overview of the ntuple structure](#overview-of-the-ntuple-structure-)
-  * [How to include quantities from your subsystem into the ntuple](#how-to-include-quantities-from-your-subsystem-into-the-ntuple-)
-  * [Current Branches](#current-branches-)
+  * [Overview of the ntuple structure](#overview-of-the-ntuple-structure)
+  * [How to include quantities from your subsystem into the ntuple](#how-to-include-quantities-from-your-subsystem-into-the-ntuple)
+  * [Current Branches](#current-branches)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
